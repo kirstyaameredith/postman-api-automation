@@ -1,4 +1,3 @@
-@"
 # Postman API Automation Testing Project
 
 A beginner-friendly API automation testing project using Postman and Newman to test the JSONPlaceholder API.
