@@ -1,0 +1,1205 @@
+{
+  "info": {
+    "_postman_id": "dc431e55-5b87-49a5-8ef6-c6793bc618ec",
+    "name": "JSONPlaceholder API Tests",
+    "description": "StartFragmentBeginner API automation testing project using NewmanEndFragment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "13231941"
+  },
+  "item": [
+    {
+      "name": "Individual Tests",
+      "item": [
+        {
+          "name": "Get All Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test 1: Check status code\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 2: Check response time\r",
+                  "pm.test(\"Response time is less than 2000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 3: Check response is an array\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an('array');\r",
+                  "});\r",
+                  "\r",
+                  "// Test 4: Check array has 10 users\r",
+                  "pm.test(\"Response contains 10 users\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.lengthOf(10);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 5: Check user structure\r",
+                  "pm.test(\"First user has required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData[0]).to.have.property('id');\r",
+                  "    pm.expect(jsonData[0]).to.have.property('name');\r",
+                  "    pm.expect(jsonData[0]).to.have.property('email');\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test 1: Verify successful response\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 2: Verify response time\r",
+                  "pm.test(\"Response time is less than 2000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 3: Verify user has correct ID\r",
+                  "pm.test(\"User has correct ID\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedId = parseInt(pm.collectionVariables.get(\"getUserId\"));\r",
+                  "    pm.expect(jsonData.id).to.eql(expectedId);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 4: Verify user object has all required properties\r",
+                  "pm.test(\"User object has all required properties\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.all.keys('id', 'name', 'username', 'email', 'address', 'phone', 'website', 'company');\r",
+                  "});\r",
+                  "\r",
+                  "// Test 5: Verify ID is from valid range\r",
+                  "pm.test(\"User ID is from valid range (1-10)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    const validUserIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
+                  "    pm.expect(validUserIds).to.include(jsonData.id);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 6: Verify email format is valid\r",
+                  "pm.test(\"Email format is valid\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 7: Verify name is not empty\r",
+                  "pm.test(\"User has a valid name\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.name).to.be.a('string');\r",
+                  "    pm.expect(jsonData.name.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 8: Verify address structure\r",
+                  "pm.test(\"User has valid address structure\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.address).to.have.property('street');\r",
+                  "    pm.expect(jsonData.address).to.have.property('city');\r",
+                  "    pm.expect(jsonData.address).to.have.property('zipcode');\r",
+                  "    pm.expect(jsonData.address).to.have.property('geo');\r",
+                  "});\r",
+                  "\r",
+                  "// Test 9: Verify company structure\r",
+                  "pm.test(\"User has valid company structure\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.company).to.have.property('name');\r",
+                  "    pm.expect(jsonData.company).to.have.property('catchPhrase');\r",
+                  "    pm.expect(jsonData.company).to.have.property('bs');\r",
+                  "});\r",
+                  "\r",
+                  "// Test 10: Verify Content-Type header\r",
+                  "pm.test(\"Content-Type header is application/json\", function () {\r",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+                  "});\r",
+                  "\r",
+                  "// Log the result\r",
+                  "console.log(\"=== User Details ===\");\r",
+                  "console.log(\"User ID:\", pm.response.json().id);\r",
+                  "console.log(\"Name:\", pm.response.json().name);\r",
+                  "console.log(\"Email:\", pm.response.json().email);\r",
+                  "console.log(\"City:\", pm.response.json().address.city);\r",
+                  "console.log(\"Company:\", pm.response.json().company.name);\r",
+                  "console.log(\"===================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// For JSONPlaceholder, valid userIds are 1-10\r",
+                  "// Select a random valid user ID to fetch\r",
+                  "const validUserIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
+                  "const randomUserId = validUserIds[Math.floor(Math.random() * validUserIds.length)];\r",
+                  "\r",
+                  "// Save to collection variable\r",
+                  "pm.collectionVariables.set(\"getUserId\", randomUserId);\r",
+                  "\r",
+                  "// Log for debugging\r",
+                  "console.log(\"=== Get Single User Test ===\");\r",
+                  "console.log(\"Fetching User ID:\", randomUserId);\r",
+                  "console.log(\"===========================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users/{{getUserId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "users",
+                "{{getUserId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create New Post",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// For JSONPlaceholder, valid userIds are 1-10\r",
+                  "// This demonstrates understanding of data validation and using only existing records\r",
+                  "const validUserIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
+                  "const randomUserId = validUserIds[Math.floor(Math.random() * validUserIds.length)];\r",
+                  "\r",
+                  "// Generate unique title with timestamp and random number\r",
+                  "const timestamp = Date.now();\r",
+                  "const randomNum = Math.floor(Math.random() * 10000);\r",
+                  "const uniqueTitle = `Test Post ${timestamp}_${randomNum}`;\r",
+                  "\r",
+                  "// Generate random body content from various options\r",
+                  "const bodyOptions = [\r",
+                  "    \"This is an automated test post about technology and innovation.\",\r",
+                  "    \"Testing API automation with dynamic content generation.\",\r",
+                  "    \"Exploring the capabilities of RESTful API testing.\",\r",
+                  "    \"Sample post content created for validation purposes.\",\r",
+                  "    \"Automated testing ensures reliability and consistency.\",\r",
+                  "    \"Validating POST endpoint with randomized test data.\",\r",
+                  "    \"Dynamic content creation for comprehensive API testing.\",\r",
+                  "    \"Demonstrating data-driven testing with variable inputs.\",\r",
+                  "    \"Quality assurance through systematic API validation.\",\r",
+                  "    \"Building robust test suites with Postman and Newman.\"\r",
+                  "];\r",
+                  "const randomBody = bodyOptions[Math.floor(Math.random() * bodyOptions.length)];\r",
+                  "\r",
+                  "// Save to Postman collection variables for use in request body and tests\r",
+                  "pm.collectionVariables.set(\"postTitle\", uniqueTitle);\r",
+                  "pm.collectionVariables.set(\"postBody\", randomBody);\r",
+                  "pm.collectionVariables.set(\"postUserId\", randomUserId);\r",
+                  "\r",
+                  "// Log to console for debugging and verification\r",
+                  "console.log(\"=== Generated Test Data ===\");\r",
+                  "console.log(\"Title:\", uniqueTitle);\r",
+                  "console.log(\"Body:\", randomBody);\r",
+                  "console.log(\"UserId:\", randomUserId);\r",
+                  "console.log(\"========================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test 1: Verify successful creation with 201 status\r",
+                  "pm.test(\"Status code is 201 (Created)\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 2: Verify response time is acceptable\r",
+                  "pm.test(\"Response time is less than 2000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 3: Verify response structure and data integrity\r",
+                  "pm.test(\"Response contains the created post with correct data\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedTitle = pm.collectionVariables.get(\"postTitle\");\r",
+                  "    var expectedBody = pm.collectionVariables.get(\"postBody\");\r",
+                  "    var expectedUserId = parseInt(pm.collectionVariables.get(\"postUserId\"));\r",
+                  "    \r",
+                  "    // Check all fields are present\r",
+                  "    pm.expect(jsonData).to.have.property('id');\r",
+                  "    pm.expect(jsonData).to.have.property('title');\r",
+                  "    pm.expect(jsonData).to.have.property('body');\r",
+                  "    pm.expect(jsonData).to.have.property('userId');\r",
+                  "    \r",
+                  "    // Verify data matches what was sent\r",
+                  "    pm.expect(jsonData.title).to.eql(expectedTitle);\r",
+                  "    pm.expect(jsonData.body).to.eql(expectedBody);\r",
+                  "    pm.expect(jsonData.userId).to.eql(expectedUserId);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 4: Verify ID was assigned\r",
+                  "pm.test(\"Response has valid ID assigned\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.id).to.be.a('number');\r",
+                  "    pm.expect(jsonData.id).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 5: Verify title uniqueness pattern\r",
+                  "pm.test(\"Title is unique with timestamp pattern\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.title).to.include(\"Test Post\");\r",
+                  "    pm.expect(jsonData.title).to.match(/\\d+_\\d+$/); // Validates timestamp_random pattern\r",
+                  "});\r",
+                  "\r",
+                  "// Test 6: Verify userId is from valid range\r",
+                  "pm.test(\"UserId is from valid range (1-10)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    const validUserIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
+                  "    pm.expect(validUserIds).to.include(jsonData.userId);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 7: Verify body content is not empty\r",
+                  "pm.test(\"Body content is not empty\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.body).to.be.a('string');\r",
+                  "    pm.expect(jsonData.body.length).to.be.above(10);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 8: Verify Content-Type header\r",
+                  "pm.test(\"Content-Type header is application/json\", function () {\r",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+                  "});\r",
+                  "\r",
+                  "// Log the complete response for debugging\r",
+                  "console.log(\"=== API Response ===\");\r",
+                  "console.log(\"Created Post ID:\", pm.response.json().id);\r",
+                  "console.log(\"Response:\", pm.response.json());\r",
+                  "console.log(\"===================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"{{postTitle}}\",\r\n    \"body\": \"{{postBody}}\",\r\n    \"userId\": {{postUserId}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Post",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// For JSONPlaceholder, valid userIds are 1-10 and valid postIds are 1-100\r",
+                  "// This demonstrates understanding of data validation and using only existing records\r",
+                  "const validUserIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
+                  "const validPostIds = Array.from({length: 100}, (_, i) => i + 1); // Creates array [1, 2, 3, ..., 100]\r",
+                  "\r",
+                  "// Select random valid IDs\r",
+                  "const randomUserId = validUserIds[Math.floor(Math.random() * validUserIds.length)];\r",
+                  "const randomPostId = validPostIds[Math.floor(Math.random() * validPostIds.length)];\r",
+                  "\r",
+                  "// Generate unique updated title with timestamp and random number\r",
+                  "const timestamp = Date.now();\r",
+                  "const randomNum = Math.floor(Math.random() * 10000);\r",
+                  "const updatedTitle = `Updated Post ${timestamp}_${randomNum}`;\r",
+                  "\r",
+                  "// Generate random updated body content from various options\r",
+                  "const bodyOptions = [\r",
+                  "    \"This post has been updated through automated API testing.\",\r",
+                  "    \"Content modified via PUT request for validation purposes.\",\r",
+                  "    \"Updated content demonstrating RESTful API functionality.\",\r",
+                  "    \"Revised post content created by automation script.\",\r",
+                  "    \"Modified entry to test update endpoint capabilities.\",\r",
+                  "    \"Changed content validating PUT request handling.\",\r",
+                  "    \"Updated text verifying data persistence in API.\",\r",
+                  "    \"Altered post demonstrating dynamic test data generation.\",\r",
+                  "    \"Refreshed content for comprehensive endpoint testing.\",\r",
+                  "    \"Modified entry showcasing automated update workflows.\"\r",
+                  "];\r",
+                  "const updatedBody = bodyOptions[Math.floor(Math.random() * bodyOptions.length)];\r",
+                  "\r",
+                  "// Save to Postman collection variables for use in request body and tests\r",
+                  "pm.collectionVariables.set(\"updatePostId\", randomPostId);\r",
+                  "pm.collectionVariables.set(\"updateTitle\", updatedTitle);\r",
+                  "pm.collectionVariables.set(\"updateBody\", updatedBody);\r",
+                  "pm.collectionVariables.set(\"updateUserId\", randomUserId);\r",
+                  "\r",
+                  "// Log to console for debugging and verification\r",
+                  "console.log(\"=== Generated Update Test Data ===\");\r",
+                  "console.log(\"Post ID to Update:\", randomPostId);\r",
+                  "console.log(\"Updated Title:\", updatedTitle);\r",
+                  "console.log(\"Updated Body:\", updatedBody);\r",
+                  "console.log(\"Updated UserId:\", randomUserId);\r",
+                  "console.log(\"==================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test 1: Verify successful update with 200 status\r",
+                  "pm.test(\"Status code is 200 (OK)\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 2: Verify response time is acceptable\r",
+                  "pm.test(\"Response time is less than 2000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 3: Verify response structure and updated data integrity\r",
+                  "pm.test(\"Response contains the updated post with correct data\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedPostId = parseInt(pm.collectionVariables.get(\"updatePostId\"));\r",
+                  "    var expectedTitle = pm.collectionVariables.get(\"updateTitle\");\r",
+                  "    var expectedBody = pm.collectionVariables.get(\"updateBody\");\r",
+                  "    var expectedUserId = parseInt(pm.collectionVariables.get(\"updateUserId\"));\r",
+                  "    \r",
+                  "    // Check all fields are present\r",
+                  "    pm.expect(jsonData).to.have.property('id');\r",
+                  "    pm.expect(jsonData).to.have.property('title');\r",
+                  "    pm.expect(jsonData).to.have.property('body');\r",
+                  "    pm.expect(jsonData).to.have.property('userId');\r",
+                  "    \r",
+                  "    // Verify data matches what was sent in the update\r",
+                  "    pm.expect(jsonData.id).to.eql(expectedPostId);\r",
+                  "    pm.expect(jsonData.title).to.eql(expectedTitle);\r",
+                  "    pm.expect(jsonData.body).to.eql(expectedBody);\r",
+                  "    pm.expect(jsonData.userId).to.eql(expectedUserId);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 4: Verify ID remains unchanged\r",
+                  "pm.test(\"Post ID matches the updated resource\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedPostId = parseInt(pm.collectionVariables.get(\"updatePostId\"));\r",
+                  "    pm.expect(jsonData.id).to.eql(expectedPostId);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 5: Verify title was updated with timestamp pattern\r",
+                  "pm.test(\"Title was updated with unique timestamp pattern\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.title).to.include(\"Updated Post\");\r",
+                  "    pm.expect(jsonData.title).to.match(/\\d+_\\d+$/); // Validates timestamp_random pattern\r",
+                  "});\r",
+                  "\r",
+                  "// Test 6: Verify userId is from valid range\r",
+                  "pm.test(\"UserId is from valid range (1-10)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    const validUserIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
+                  "    pm.expect(validUserIds).to.include(jsonData.userId);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 7: Verify postId is from valid range\r",
+                  "pm.test(\"Post ID is from valid range (1-100)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.id).to.be.within(1, 100);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 8: Verify body content is not empty and was updated\r",
+                  "pm.test(\"Body content is not empty and contains update text\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.body).to.be.a('string');\r",
+                  "    pm.expect(jsonData.body.length).to.be.above(10);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 9: Verify Content-Type header\r",
+                  "pm.test(\"Content-Type header is application/json\", function () {\r",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+                  "});\r",
+                  "\r",
+                  "// Test 10: Verify all expected fields are present\r",
+                  "pm.test(\"Response has all required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.all.keys('id', 'title', 'body', 'userId');\r",
+                  "});\r",
+                  "\r",
+                  "// Log the complete response for debugging\r",
+                  "console.log(\"=== API Update Response ===\");\r",
+                  "console.log(\"Updated Post ID:\", pm.response.json().id);\r",
+                  "console.log(\"New Title:\", pm.response.json().title);\r",
+                  "console.log(\"Full Response:\", pm.response.json());\r",
+                  "console.log(\"===========================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": {{updatePostId}},\r\n    \"title\": \"{{updateTitle}}\",\r\n    \"body\": \"{{updateBody}}\",\r\n    \"userId\": {{updateUserId}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{updatePostId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{updatePostId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Post",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// For JSONPlaceholder, valid postIds are 1-100\r",
+                  "// Select a random valid post ID to delete\r",
+                  "const validPostIds = Array.from({length: 100}, (_, i) => i + 1); // Creates [1, 2, 3, ..., 100]\r",
+                  "const randomPostId = validPostIds[Math.floor(Math.random() * validPostIds.length)];\r",
+                  "\r",
+                  "// Save to collection variable\r",
+                  "pm.collectionVariables.set(\"deletePostId\", randomPostId);\r",
+                  "\r",
+                  "// Log for debugging\r",
+                  "console.log(\"=== Delete Post Test ===\");\r",
+                  "console.log(\"Deleting Post ID:\", randomPostId);\r",
+                  "console.log(\"=======================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test 1: Verify successful deletion with 200 status\r",
+                  "pm.test(\"Status code is 200 (OK)\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 2: Verify response time is acceptable\r",
+                  "pm.test(\"Response time is less than 2000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 3: Verify deletion was processed\r",
+                  "pm.test(\"Delete operation completed successfully\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    // JSONPlaceholder returns an empty object {} on successful delete\r",
+                  "    pm.expect(jsonData).to.be.an('object');\r",
+                  "});\r",
+                  "\r",
+                  "// Test 4: Verify response body is empty object (successful deletion)\r",
+                  "pm.test(\"Response body is empty object\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(Object.keys(jsonData)).to.have.lengthOf(0);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 5: Verify Content-Type header\r",
+                  "pm.test(\"Content-Type header is application/json\", function () {\r",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+                  "});\r",
+                  "\r",
+                  "// Test 6: Verify the post ID that was deleted was valid\r",
+                  "pm.test(\"Deleted post ID was from valid range (1-100)\", function () {\r",
+                  "    var deletedId = parseInt(pm.collectionVariables.get(\"deletePostId\"));\r",
+                  "    pm.expect(deletedId).to.be.within(1, 100);\r",
+                  "});\r",
+                  "\r",
+                  "// Test 7: Verify response structure\r",
+                  "pm.test(\"Response has correct structure for deletion\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    // Empty object is the expected response for successful deletion\r",
+                  "    pm.expect(typeof jsonData).to.eql('object');\r",
+                  "    pm.expect(Array.isArray(jsonData)).to.be.false;\r",
+                  "});\r",
+                  "\r",
+                  "// Log the result\r",
+                  "console.log(\"=== Delete Result ===\");\r",
+                  "console.log(\"✓ Post ID\", pm.collectionVariables.get(\"deletePostId\"), \"deleted successfully\");\r",
+                  "console.log(\"Response:\", pm.response.json());\r",
+                  "console.log(\"====================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{deletePostId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{deletePostId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "CRUD Workflow",
+      "item": [
+        {
+          "name": "Workflow 1 - Get Existing Post",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// For JSONPlaceholder, valid postIds are 1-100\r",
+                  "// Select a random existing post to work with throughout the workflow\r",
+                  "const validPostIds = Array.from({length: 100}, (_, i) => i + 1);\r",
+                  "const existingPostId = validPostIds[Math.floor(Math.random() * validPostIds.length)];\r",
+                  "\r",
+                  "// Save the post ID for use throughout the entire workflow\r",
+                  "pm.collectionVariables.set(\"workflowPostId\", existingPostId);\r",
+                  "\r",
+                  "console.log(\"=== WORKFLOW STEP 1: GET EXISTING POST ===\");\r",
+                  "console.log(\"Selected Post ID:\", existingPostId);\r",
+                  "console.log(\"==========================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Retrieved post has correct ID\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedId = parseInt(pm.collectionVariables.get(\"workflowPostId\"));\r",
+                  "    pm.expect(jsonData.id).to.eql(expectedId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post has all required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('id');\r",
+                  "    pm.expect(jsonData).to.have.property('title');\r",
+                  "    pm.expect(jsonData).to.have.property('body');\r",
+                  "    pm.expect(jsonData).to.have.property('userId');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post ID is from valid range (1-100)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.id).to.be.within(1, 100);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User ID is from valid range (1-10)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.userId).to.be.within(1, 10);\r",
+                  "});\r",
+                  "\r",
+                  "// Save original data for comparison later\r",
+                  "var originalPost = pm.response.json();\r",
+                  "pm.collectionVariables.set(\"originalPostTitle\", originalPost.title);\r",
+                  "pm.collectionVariables.set(\"originalPostBody\", originalPost.body);\r",
+                  "\r",
+                  "console.log(\"✓ Successfully retrieved existing post\");\r",
+                  "console.log(\"Post ID:\", originalPost.id);\r",
+                  "console.log(\"Original Title:\", originalPost.title);\r",
+                  "console.log(\"→ Moving to next step: UPDATE this post\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{workflowPostId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{workflowPostId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Workflow 2 - Update Post",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate updated content\r",
+                  "const workflowUpdateTimestamp = Date.now();\r",
+                  "const workflowUpdateRandomNum = Math.floor(Math.random() * 10000);\r",
+                  "const updatedTitle = `UPDATED Workflow Post ${workflowUpdateTimestamp}_${workflowUpdateRandomNum}`;\r",
+                  "\r",
+                  "const updatedBodyOptions = [\r",
+                  "    \"This post has been UPDATED as part of the workflow test.\",\r",
+                  "    \"Content modified in step 2 of the CRUD workflow.\",\r",
+                  "    \"Updated content demonstrating PUT functionality in workflow.\",\r",
+                  "    \"Modified post verifying end-to-end update capabilities.\",\r",
+                  "    \"Changed content in the automated workflow test sequence.\"\r",
+                  "];\r",
+                  "const updatedBody = updatedBodyOptions[Math.floor(Math.random() * updatedBodyOptions.length)];\r",
+                  "\r",
+                  "// Use a valid userId\r",
+                  "const validUserIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
+                  "const randomUserId = validUserIds[Math.floor(Math.random() * validUserIds.length)];\r",
+                  "\r",
+                  "// Save updated content\r",
+                  "pm.collectionVariables.set(\"workflowUpdatedTitle\", updatedTitle);\r",
+                  "pm.collectionVariables.set(\"workflowUpdatedBody\", updatedBody);\r",
+                  "pm.collectionVariables.set(\"workflowUserId\", randomUserId);\r",
+                  "\r",
+                  "console.log(\"=== WORKFLOW STEP 2: UPDATE POST ===\");\r",
+                  "console.log(\"Updating post ID:\", pm.collectionVariables.get(\"workflowPostId\"));\r",
+                  "console.log(\"New Title:\", updatedTitle);\r",
+                  "console.log(\"New Body:\", updatedBody);\r",
+                  "console.log(\"New UserId:\", randomUserId);\r",
+                  "console.log(\"====================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 (OK)\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Updated post has correct ID\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedId = parseInt(pm.collectionVariables.get(\"workflowPostId\"));\r",
+                  "    pm.expect(jsonData.id).to.eql(expectedId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post was updated with new data\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedTitle = pm.collectionVariables.get(\"workflowUpdatedTitle\");\r",
+                  "    var expectedBody = pm.collectionVariables.get(\"workflowUpdatedBody\");\r",
+                  "    var expectedUserId = parseInt(pm.collectionVariables.get(\"workflowUserId\"));\r",
+                  "    \r",
+                  "    pm.expect(jsonData.title).to.eql(expectedTitle);\r",
+                  "    pm.expect(jsonData.body).to.eql(expectedBody);\r",
+                  "    pm.expect(jsonData.userId).to.eql(expectedUserId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Updated title contains 'UPDATED' keyword\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.title).to.include(\"UPDATED\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Title is different from original\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var originalTitle = pm.collectionVariables.get(\"originalPostTitle\");\r",
+                  "    pm.expect(jsonData.title).to.not.eql(originalTitle);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Post updated successfully\");\r",
+                  "console.log(\"Updated Title:\", pm.response.json().title);\r",
+                  "console.log(\"→ Moving to next step: GET the post again to verify\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": {{workflowPostId}},\r\n    \"title\": \"{{workflowUpdatedTitle}}\",\r\n    \"body\": \"{{workflowUpdatedBody}}\",\r\n    \"userId\": {{workflowUserId}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{workflowPostId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{workflowPostId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Workflow 3 - Verify Update",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "console.log(\"=== WORKFLOW STEP 3: VERIFY UPDATE ===\");\r",
+                  "console.log(\"Fetching post ID:\", pm.collectionVariables.get(\"workflowPostId\"));\r",
+                  "console.log(\"Expected to see original data (JSONPlaceholder doesn't persist updates)\");\r",
+                  "console.log(\"======================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Retrieved post has correct ID\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedId = parseInt(pm.collectionVariables.get(\"workflowPostId\"));\r",
+                  "    pm.expect(jsonData.id).to.eql(expectedId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post still has all required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('id');\r",
+                  "    pm.expect(jsonData).to.have.property('title');\r",
+                  "    pm.expect(jsonData).to.have.property('body');\r",
+                  "    pm.expect(jsonData).to.have.property('userId');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post data matches original (JSONPlaceholder doesn't persist)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var originalTitle = pm.collectionVariables.get(\"originalPostTitle\");\r",
+                  "    var originalBody = pm.collectionVariables.get(\"originalPostBody\");\r",
+                  "    \r",
+                  "    // This will pass because JSONPlaceholder returns original data\r",
+                  "    pm.expect(jsonData.title).to.eql(originalTitle);\r",
+                  "    pm.expect(jsonData.body).to.eql(originalBody);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Verification complete\");\r",
+                  "console.log(\"Note: JSONPlaceholder returned original data (updates aren't persisted)\");\r",
+                  "console.log(\"→ Moving to next step: DELETE the post\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{workflowPostId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{workflowPostId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Workflow 4 - Delete Post",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "console.log(\"=== WORKFLOW STEP 4: DELETE POST ===\");\r",
+                  "console.log(\"Deleting post ID:\", pm.collectionVariables.get(\"workflowPostId\"));\r",
+                  "console.log(\"====================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 (OK)\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Delete operation completed\", function () {\r",
+                  "    // JSONPlaceholder returns empty object {} on successful delete\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an('object');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is empty object (successful deletion)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(Object.keys(jsonData)).to.have.lengthOf(0);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Post deleted successfully\");\r",
+                  "console.log(\"→ Moving to final step: CREATE a new post\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{workflowPostId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{workflowPostId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Workflow 5 - Create New Post",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate unique test data for the new post\r",
+                  "const newPostTimestamp = Date.now();\r",
+                  "const newPostRandomNum = Math.floor(Math.random() * 10000);\r",
+                  "const newPostTitle = `NEW Workflow Post ${newPostTimestamp}_${newPostRandomNum}`;\r",
+                  "\r",
+                  "const newPostBodyOptions = [\r",
+                  "    \"This is a brand new post created at the end of the CRUD workflow.\",\r",
+                  "    \"Final step: Creating a new post to demonstrate POST functionality.\",\r",
+                  "    \"New post created after completing read, update, and delete operations.\",\r",
+                  "    \"Demonstrating complete CRUD cycle with this newly created post.\",\r",
+                  "    \"Workflow complete: This new post shows POST endpoint functionality.\"\r",
+                  "];\r",
+                  "const newPostBody = newPostBodyOptions[Math.floor(Math.random() * newPostBodyOptions.length)];\r",
+                  "\r",
+                  "// Valid userIds for JSONPlaceholder\r",
+                  "const validUserIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
+                  "const newPostUserId = validUserIds[Math.floor(Math.random() * validUserIds.length)];\r",
+                  "\r",
+                  "// Save to collection variables\r",
+                  "pm.collectionVariables.set(\"workflowNewPostTitle\", newPostTitle);\r",
+                  "pm.collectionVariables.set(\"workflowNewPostBody\", newPostBody);\r",
+                  "pm.collectionVariables.set(\"workflowUserId\", newPostUserId);\r",
+                  "\r",
+                  "console.log(\"=== WORKFLOW STEP 5: CREATE NEW POST ===\");\r",
+                  "console.log(\"New Post Title:\", newPostTitle);\r",
+                  "console.log(\"New Post Body:\", newPostBody);\r",
+                  "console.log(\"UserId:\", newPostUserId);\r",
+                  "console.log(\"========================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 (Created)\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains created post with ID\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('id');\r",
+                  "    pm.expect(jsonData.id).to.be.a('number');\r",
+                  "    pm.expect(jsonData.id).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Created post has correct data\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedTitle = pm.collectionVariables.get(\"workflowNewPostTitle\");\r",
+                  "    var expectedBody = pm.collectionVariables.get(\"workflowNewPostBody\");\r",
+                  "    var expectedUserId = parseInt(pm.collectionVariables.get(\"workflowUserId\"));\r",
+                  "    \r",
+                  "    pm.expect(jsonData.title).to.eql(expectedTitle);\r",
+                  "    pm.expect(jsonData.body).to.eql(expectedBody);\r",
+                  "    pm.expect(jsonData.userId).to.eql(expectedUserId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"New post title contains 'NEW' keyword\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.title).to.include(\"NEW\");\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ New post created with ID:\", pm.response.json().id);\r",
+                  "console.log(\"\");\r",
+                  "console.log(\"=== WORKFLOW COMPLETE ===\");\r",
+                  "console.log(\"Summary of completed operations:\");\r",
+                  "console.log(\"1. ✓ GET - Retrieved existing post ID\", pm.collectionVariables.get(\"workflowPostId\"));\r",
+                  "console.log(\"2. ✓ PUT - Updated the post\");\r",
+                  "console.log(\"3. ✓ GET - Verified post still exists\");\r",
+                  "console.log(\"4. ✓ DELETE - Deleted the post\");\r",
+                  "console.log(\"5. ✓ POST - Created new post with ID\", pm.response.json().id);\r",
+                  "console.log(\"Complete CRUD cycle executed successfully!\");\r",
+                  "console.log(\"========================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"{{workflowNewPostTitle}}\",\r\n    \"body\": \"{{workflowNewPostBody}}\",\r\n    \"userId\": {{workflowUserId}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "postTitle",
+      "value": ""
+    },
+    {
+      "key": "postBody",
+      "value": ""
+    },
+    {
+      "key": "postUserId",
+      "value": ""
+    },
+    {
+      "key": "updatePostId",
+      "value": ""
+    },
+    {
+      "key": "updateTitle",
+      "value": ""
+    },
+    {
+      "key": "updateBody",
+      "value": ""
+    },
+    {
+      "key": "updateUserId",
+      "value": ""
+    },
+    {
+      "key": "deletePostId",
+      "value": ""
+    },
+    {
+      "key": "workflowPostTitle",
+      "value": ""
+    },
+    {
+      "key": "workflowPostBody",
+      "value": ""
+    },
+    {
+      "key": "workflowUserId",
+      "value": ""
+    },
+    {
+      "key": "workflowPostId",
+      "value": ""
+    },
+    {
+      "key": "workflowUpdatedTitle",
+      "value": ""
+    },
+    {
+      "key": "workflowUpdatedBody",
+      "value": ""
+    },
+    {
+      "key": "getUserId",
+      "value": ""
+    },
+    {
+      "key": "originalPostTitle",
+      "value": ""
+    },
+    {
+      "key": "originalPostBody",
+      "value": ""
+    },
+    {
+      "key": "workflowNewPostTitle",
+      "value": ""
+    },
+    {
+      "key": "workflowNewPostBody",
+      "value": ""
+    }
+  ]
+}
