@@ -630,6 +630,638 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Get Comments",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "console.log(\"=== Get Comments Test ===\");\r",
+                  "console.log(\"Fetching first 20 comments\");\r",
+                  "console.log(\"========================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an('array');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains 20 comments\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.lengthOf(20);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Comments have required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(comment) {\r",
+                  "        pm.expect(comment).to.have.property('id');\r",
+                  "        pm.expect(comment).to.have.property('postId');\r",
+                  "        pm.expect(comment).to.have.property('name');\r",
+                  "        pm.expect(comment).to.have.property('email');\r",
+                  "        pm.expect(comment).to.have.property('body');\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Email format is valid in all comments\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(comment) {\r",
+                  "        pm.expect(comment.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"PostId is a valid number\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(comment) {\r",
+                  "        pm.expect(comment.postId).to.be.a('number');\r",
+                  "        pm.expect(comment.postId).to.be.above(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Retrieved\", pm.response.json().length, \"comments\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/comments?_limit=20",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "comments"
+              ],
+              "query": [
+                {
+                  "key": "_limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Photos",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "console.log(\"=== Get Photos Test ===\");\r",
+                  "console.log(\"Fetching first 10 photos\");\r",
+                  "console.log(\"=======================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an('array');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains 10 photos\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.lengthOf(10);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Photos have required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(photo) {\r",
+                  "        pm.expect(photo).to.have.property('id');\r",
+                  "        pm.expect(photo).to.have.property('albumId');\r",
+                  "        pm.expect(photo).to.have.property('title');\r",
+                  "        pm.expect(photo).to.have.property('url');\r",
+                  "        pm.expect(photo).to.have.property('thumbnailUrl');\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Photo URLs are valid\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(photo) {\r",
+                  "        pm.expect(photo.url).to.match(/^https?:\\/\\/.+/);\r",
+                  "        pm.expect(photo.thumbnailUrl).to.match(/^https?:\\/\\/.+/);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"AlbumId is a valid number\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(photo) {\r",
+                  "        pm.expect(photo.albumId).to.be.a('number');\r",
+                  "        pm.expect(photo.albumId).to.be.above(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Retrieved\", pm.response.json().length, \"photos\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/photos?_limit=10",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "photos"
+              ],
+              "query": [
+                {
+                  "key": "_limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Albums",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "console.log(\"=== Get Albums Test ===\");\r",
+                  "console.log(\"Fetching first 20 albums\");\r",
+                  "console.log(\"=======================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an('array');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains 20 albums\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.lengthOf(20);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Albums have required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(album) {\r",
+                  "        pm.expect(album).to.have.property('id');\r",
+                  "        pm.expect(album).to.have.property('userId');\r",
+                  "        pm.expect(album).to.have.property('title');\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"UserId is from valid range (1-10)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(album) {\r",
+                  "        pm.expect(album.userId).to.be.within(1, 10);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Title is not empty\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(album) {\r",
+                  "        pm.expect(album.title).to.be.a('string');\r",
+                  "        pm.expect(album.title.length).to.be.above(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Retrieved\", pm.response.json().length, \"albums\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/albums?_limit=20",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "albums"
+              ],
+              "query": [
+                {
+                  "key": "_limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Todos",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "console.log(\"=== Get Todos Test ===\");\r",
+                  "console.log(\"Fetching first 20 todos\");\r",
+                  "console.log(\"======================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an('array');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains 20 todos\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.lengthOf(20);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Todos have required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(todo) {\r",
+                  "        pm.expect(todo).to.have.property('id');\r",
+                  "        pm.expect(todo).to.have.property('userId');\r",
+                  "        pm.expect(todo).to.have.property('title');\r",
+                  "        pm.expect(todo).to.have.property('completed');\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Completed is a boolean\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(todo) {\r",
+                  "        pm.expect(todo.completed).to.be.a('boolean');\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"UserId is from valid range (1-10)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(todo) {\r",
+                  "        pm.expect(todo.userId).to.be.within(1, 10);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"At least some todos are completed\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var completedCount = jsonData.filter(todo => todo.completed === true).length;\r",
+                  "    pm.expect(completedCount).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Retrieved\", pm.response.json().length, \"todos\");\r",
+                  "var completed = pm.response.json().filter(t => t.completed).length;\r",
+                  "console.log(\"  -\", completed, \"completed,\", (pm.response.json().length - completed), \"pending\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/todos?_limit=20",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "todos"
+              ],
+              "query": [
+                {
+                  "key": "_limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create New Comment",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Select a valid post ID (1-100)\r",
+                  "const validPostIds = Array.from({length: 100}, (_, i) => i + 1);\r",
+                  "const randomPostId = validPostIds[Math.floor(Math.random() * validPostIds.length)];\r",
+                  "\r",
+                  "// Generate unique comment data\r",
+                  "const timestamp = Date.now();\r",
+                  "const randomNum = Math.floor(Math.random() * 1000);\r",
+                  "const commentName = `Test Comment ${timestamp}_${randomNum}`;\r",
+                  "\r",
+                  "// Generate random email\r",
+                  "const emailDomains = [\"test.com\", \"example.com\", \"demo.org\", \"automation.io\"];\r",
+                  "const randomDomain = emailDomains[Math.floor(Math.random() * emailDomains.length)];\r",
+                  "const commentEmail = `tester${randomNum}@${randomDomain}`;\r",
+                  "\r",
+                  "// Generate random comment body\r",
+                  "const commentBodies = [\r",
+                  "    \"This is an automated test comment to validate POST functionality.\",\r",
+                  "    \"Testing comment creation with dynamic data generation.\",\r",
+                  "    \"Automated comment for API validation purposes.\",\r",
+                  "    \"Sample comment created through test automation.\",\r",
+                  "    \"Validating comment endpoint with randomized test data.\"\r",
+                  "];\r",
+                  "const commentBody = commentBodies[Math.floor(Math.random() * commentBodies.length)];\r",
+                  "\r",
+                  "// Save to collection variables\r",
+                  "pm.collectionVariables.set(\"commentPostId\", randomPostId);\r",
+                  "pm.collectionVariables.set(\"commentName\", commentName);\r",
+                  "pm.collectionVariables.set(\"commentEmail\", commentEmail);\r",
+                  "pm.collectionVariables.set(\"commentBody\", commentBody);\r",
+                  "\r",
+                  "console.log(\"=== Create Comment Test ===\");\r",
+                  "console.log(\"Post ID:\", randomPostId);\r",
+                  "console.log(\"Name:\", commentName);\r",
+                  "console.log(\"Email:\", commentEmail);\r",
+                  "console.log(\"===========================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 (Created)\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains created comment with ID\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('id');\r",
+                  "    pm.expect(jsonData.id).to.be.a('number');\r",
+                  "    pm.expect(jsonData.id).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Created comment has correct data\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedPostId = parseInt(pm.collectionVariables.get(\"commentPostId\"));\r",
+                  "    var expectedName = pm.collectionVariables.get(\"commentName\");\r",
+                  "    var expectedEmail = pm.collectionVariables.get(\"commentEmail\");\r",
+                  "    var expectedBody = pm.collectionVariables.get(\"commentBody\");\r",
+                  "    \r",
+                  "    pm.expect(jsonData.postId).to.eql(expectedPostId);\r",
+                  "    pm.expect(jsonData.name).to.eql(expectedName);\r",
+                  "    pm.expect(jsonData.email).to.eql(expectedEmail);\r",
+                  "    pm.expect(jsonData.body).to.eql(expectedBody);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Email format is valid\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"PostId is a positive number\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.postId).to.be.a('number');\r",
+                  "    pm.expect(jsonData.postId).to.be.within(1, 100);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Comment created with ID:\", pm.response.json().id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"postId\": {{commentPostId}},\r\n    \"name\": \"{{commentName}}\",\r\n    \"email\": \"{{commentEmail}}\",\r\n    \"body\": \"{{commentBody}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/comments",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Patch Post (Partial Update)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Select a valid post ID (1-100)\r",
+                  "const validPostIds = Array.from({length: 100}, (_, i) => i + 1);\r",
+                  "const randomPostId = validPostIds[Math.floor(Math.random() * validPostIds.length)];\r",
+                  "\r",
+                  "// Generate unique title for partial update\r",
+                  "const timestamp = Date.now();\r",
+                  "const randomNum = Math.floor(Math.random() * 1000);\r",
+                  "const patchTitle = `PATCHED Title ${timestamp}_${randomNum}`;\r",
+                  "\r",
+                  "// Save to collection variables\r",
+                  "pm.collectionVariables.set(\"patchPostId\", randomPostId);\r",
+                  "pm.collectionVariables.set(\"patchTitle\", patchTitle);\r",
+                  "\r",
+                  "console.log(\"=== Patch Post Test ===\");\r",
+                  "console.log(\"Patching Post ID:\", randomPostId);\r",
+                  "console.log(\"New Title:\", patchTitle);\r",
+                  "console.log(\"Note: Only updating title (partial update)\");\r",
+                  "console.log(\"=======================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 (OK)\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is acceptable\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains the patched post\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('id');\r",
+                  "    pm.expect(jsonData).to.have.property('title');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post ID matches the patched resource\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedPostId = parseInt(pm.collectionVariables.get(\"patchPostId\"));\r",
+                  "    pm.expect(jsonData.id).to.eql(expectedPostId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Title was updated (partial update)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedTitle = pm.collectionVariables.get(\"patchTitle\");\r",
+                  "    pm.expect(jsonData.title).to.eql(expectedTitle);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Other fields still exist (body, userId)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    // PATCH should only update title, other fields should remain\r",
+                  "    pm.expect(jsonData).to.have.property('body');\r",
+                  "    pm.expect(jsonData).to.have.property('userId');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Updated title contains 'PATCHED' keyword\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.title).to.include(\"PATCHED\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"PostId is from valid range (1-100)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.id).to.be.within(1, 100);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Post partially updated\");\r",
+                  "console.log(\"  ID:\", pm.response.json().id);\r",
+                  "console.log(\"  New Title:\", pm.response.json().title);\r",
+                  "console.log(\"  Body unchanged:\", pm.response.json().body ? \"✓\" : \"✗\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"{{patchTitle}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{patchPostId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{patchPostId}}"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -1122,6 +1754,678 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "User Posts Workflow",
+      "item": [
+        {
+          "name": "User Posts 1 - Get User",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Select a random user (1-10)\r",
+                  "const validUserIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
+                  "const randomUserId = validUserIds[Math.floor(Math.random() * validUserIds.length)];\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"userPostsUserId\", randomUserId);\r",
+                  "\r",
+                  "console.log(\"=== USER POSTS WORKFLOW - STEP 1 ===\");\r",
+                  "console.log(\"Selected User ID:\", randomUserId);\r",
+                  "console.log(\"====================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User has correct ID\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedId = parseInt(pm.collectionVariables.get(\"userPostsUserId\"));\r",
+                  "    pm.expect(jsonData.id).to.eql(expectedId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User has all required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('name');\r",
+                  "    pm.expect(jsonData).to.have.property('email');\r",
+                  "    pm.expect(jsonData).to.have.property('username');\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ User retrieved:\", pm.response.json().name);\r",
+                  "console.log(\"→ Next: Get this user's posts\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users/{{userPostsUserId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "users",
+                "{{userPostsUserId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Posts 2 - Get User's Posts",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "console.log(\"=== USER POSTS WORKFLOW - STEP 2 ===\");\r",
+                  "console.log(\"Fetching posts for User ID:\", pm.collectionVariables.get(\"userPostsUserId\"));\r",
+                  "console.log(\"====================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array of posts\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an('array');\r",
+                  "    pm.expect(jsonData.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"All posts belong to the correct user\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedUserId = parseInt(pm.collectionVariables.get(\"userPostsUserId\"));\r",
+                  "    \r",
+                  "    jsonData.forEach(function(post) {\r",
+                  "        pm.expect(post.userId).to.eql(expectedUserId);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Posts have required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(post) {\r",
+                  "        pm.expect(post).to.have.property('id');\r",
+                  "        pm.expect(post).to.have.property('title');\r",
+                  "        pm.expect(post).to.have.property('body');\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Found\", pm.response.json().length, \"posts for this user\");\r",
+                  "console.log(\"→ Next: Create a new post for this user\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts?userId={{userPostsUserId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{userPostsUserId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Posts 3 - Create Post for User",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate unique post data\r",
+                  "const timestamp = Date.now();\r",
+                  "const randomNum = Math.floor(Math.random() * 1000);\r",
+                  "const newTitle = `User Post ${timestamp}_${randomNum}`;\r",
+                  "\r",
+                  "const newBodyOptions = [\r",
+                  "    \"This is a new post created for the user in the workflow.\",\r",
+                  "    \"Testing post creation for a specific user.\",\r",
+                  "    \"Automated post created as part of user posts workflow.\",\r",
+                  "    \"New content added for user validation testing.\",\r",
+                  "    \"Workflow test: Creating post for selected user.\"\r",
+                  "];\r",
+                  "const newBody = newBodyOptions[Math.floor(Math.random() * newBodyOptions.length)];\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"userPostsNewTitle\", newTitle);\r",
+                  "pm.collectionVariables.set(\"userPostsNewBody\", newBody);\r",
+                  "\r",
+                  "console.log(\"=== USER POSTS WORKFLOW - STEP 3 ===\");\r",
+                  "console.log(\"Creating post for User ID:\", pm.collectionVariables.get(\"userPostsUserId\"));\r",
+                  "console.log(\"Title:\", newTitle);\r",
+                  "console.log(\"====================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 (Created)\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post was created with ID\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('id');\r",
+                  "    pm.expect(jsonData.id).to.be.a('number');\r",
+                  "    \r",
+                  "    // Save the created post ID for deletion\r",
+                  "    pm.collectionVariables.set(\"userPostsCreatedId\", jsonData.id);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post belongs to correct user\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedUserId = parseInt(pm.collectionVariables.get(\"userPostsUserId\"));\r",
+                  "    pm.expect(jsonData.userId).to.eql(expectedUserId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post has correct data\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedTitle = pm.collectionVariables.get(\"userPostsNewTitle\");\r",
+                  "    var expectedBody = pm.collectionVariables.get(\"userPostsNewBody\");\r",
+                  "    \r",
+                  "    pm.expect(jsonData.title).to.eql(expectedTitle);\r",
+                  "    pm.expect(jsonData.body).to.eql(expectedBody);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Post created with ID:\", pm.response.json().id);\r",
+                  "console.log(\"→ Next: Delete the created post\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"{{userPostsNewTitle}}\",\r\n    \"body\": \"{{userPostsNewBody}}\",\r\n    \"userId\": {{userPostsUserId}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Posts 4 - Delete Post",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "console.log(\"=== USER POSTS WORKFLOW - STEP 4 ===\");\r",
+                  "console.log(\"Deleting Post ID:\", pm.collectionVariables.get(\"userPostsCreatedId\"));\r",
+                  "console.log(\"====================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 (OK)\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Delete operation completed\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an('object');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is empty (successful deletion)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(Object.keys(jsonData)).to.have.lengthOf(0);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Post deleted successfully\");\r",
+                  "console.log(\"\");\r",
+                  "console.log(\"=== USER POSTS WORKFLOW COMPLETE ===\");\r",
+                  "console.log(\"Summary:\");\r",
+                  "console.log(\"1. ✓ Retrieved User ID:\", pm.collectionVariables.get(\"userPostsUserId\"));\r",
+                  "console.log(\"2. ✓ Retrieved user's existing posts\");\r",
+                  "console.log(\"3. ✓ Created new post with ID:\", pm.collectionVariables.get(\"userPostsCreatedId\"));\r",
+                  "console.log(\"4. ✓ Deleted the created post\");\r",
+                  "console.log(\"====================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{userPostsCreatedId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{userPostsCreatedId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comments Workflow",
+      "item": [
+        {
+          "name": "Comments 1 - Get Post",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Select a random post (1-100)\r",
+                  "const validPostIds = Array.from({length: 100}, (_, i) => i + 1);\r",
+                  "const randomPostId = validPostIds[Math.floor(Math.random() * validPostIds.length)];\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"commentsPostId\", randomPostId);\r",
+                  "\r",
+                  "console.log(\"=== COMMENTS WORKFLOW - STEP 1 ===\");\r",
+                  "console.log(\"Selected Post ID:\", randomPostId);\r",
+                  "console.log(\"==================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post has correct ID\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedId = parseInt(pm.collectionVariables.get(\"commentsPostId\"));\r",
+                  "    pm.expect(jsonData.id).to.eql(expectedId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Post has all required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('title');\r",
+                  "    pm.expect(jsonData).to.have.property('body');\r",
+                  "    pm.expect(jsonData).to.have.property('userId');\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Post retrieved:\", pm.response.json().title);\r",
+                  "console.log(\"→ Next: Get comments on this post\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{commentsPostId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{commentsPostId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Comments 2 - Get Post Comments",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "console.log(\"=== COMMENTS WORKFLOW - STEP 2 ===\");\r",
+                  "console.log(\"Fetching comments for Post ID:\", pm.collectionVariables.get(\"commentsPostId\"));\r",
+                  "console.log(\"==================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is an array of comments\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an('array');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"All comments belong to the correct post\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedPostId = parseInt(pm.collectionVariables.get(\"commentsPostId\"));\r",
+                  "    \r",
+                  "    jsonData.forEach(function(comment) {\r",
+                  "        pm.expect(comment.postId).to.eql(expectedPostId);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Comments have required fields\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(comment) {\r",
+                  "        pm.expect(comment).to.have.property('id');\r",
+                  "        pm.expect(comment).to.have.property('name');\r",
+                  "        pm.expect(comment).to.have.property('email');\r",
+                  "        pm.expect(comment).to.have.property('body');\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"All emails are valid format\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    jsonData.forEach(function(comment) {\r",
+                  "        pm.expect(comment.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Found\", pm.response.json().length, \"comments on this post\");\r",
+                  "console.log(\"→ Next: Add a new comment\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/{{commentsPostId}}/comments",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "posts",
+                "{{commentsPostId}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Comments 3 - Add New Comment",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate unique comment data\r",
+                  "const timestamp = Date.now();\r",
+                  "const randomNum = Math.floor(Math.random() * 1000);\r",
+                  "const newName = `Workflow Comment ${timestamp}`;\r",
+                  "\r",
+                  "const emailDomains = [\"workflow.test\", \"automation.com\", \"testing.io\"];\r",
+                  "const randomDomain = emailDomains[Math.floor(Math.random() * emailDomains.length)];\r",
+                  "const newEmail = `commenter${randomNum}@${randomDomain}`;\r",
+                  "\r",
+                  "const newBodyOptions = [\r",
+                  "    \"This comment was added as part of the comments workflow test.\",\r",
+                  "    \"Automated comment to validate POST comments functionality.\",\r",
+                  "    \"Testing comment creation in workflow automation.\",\r",
+                  "    \"New comment added for API workflow validation.\",\r",
+                  "    \"Workflow test: Adding comment to selected post.\"\r",
+                  "];\r",
+                  "const newBody = newBodyOptions[Math.floor(Math.random() * newBodyOptions.length)];\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"commentsNewName\", newName);\r",
+                  "pm.collectionVariables.set(\"commentsNewEmail\", newEmail);\r",
+                  "pm.collectionVariables.set(\"commentsNewBody\", newBody);\r",
+                  "\r",
+                  "console.log(\"=== COMMENTS WORKFLOW - STEP 3 ===\");\r",
+                  "console.log(\"Adding comment to Post ID:\", pm.collectionVariables.get(\"commentsPostId\"));\r",
+                  "console.log(\"Name:\", newName);\r",
+                  "console.log(\"Email:\", newEmail);\r",
+                  "console.log(\"==================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 (Created)\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Comment was created with ID\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.have.property('id');\r",
+                  "    pm.expect(jsonData.id).to.be.a('number');\r",
+                  "    \r",
+                  "    // Save the created comment ID for deletion\r",
+                  "    pm.collectionVariables.set(\"commentsCreatedId\", jsonData.id);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Comment belongs to correct post\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedPostId = parseInt(pm.collectionVariables.get(\"commentsPostId\"));\r",
+                  "    pm.expect(jsonData.postId).to.eql(expectedPostId);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Comment has correct data\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    var expectedName = pm.collectionVariables.get(\"commentsNewName\");\r",
+                  "    var expectedEmail = pm.collectionVariables.get(\"commentsNewEmail\");\r",
+                  "    var expectedBody = pm.collectionVariables.get(\"commentsNewBody\");\r",
+                  "    \r",
+                  "    pm.expect(jsonData.name).to.eql(expectedName);\r",
+                  "    pm.expect(jsonData.email).to.eql(expectedEmail);\r",
+                  "    pm.expect(jsonData.body).to.eql(expectedBody);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Email format is valid\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.email).to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Comment created with ID:\", pm.response.json().id);\r",
+                  "console.log(\"→ Next: Delete the comment\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"postId\": {{commentsPostId}},\r\n    \"name\": \"{{commentsNewName}}\",\r\n    \"email\": \"{{commentsNewEmail}}\",\r\n    \"body\": \"{{commentsNewBody}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/comments",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Comments 4 - Delete Comment",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "console.log(\"=== COMMENTS WORKFLOW - STEP 4 ===\");\r",
+                  "console.log(\"Deleting Comment ID:\", pm.collectionVariables.get(\"commentsCreatedId\"));\r",
+                  "console.log(\"==================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 (OK)\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Delete operation completed\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.be.an('object');\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is empty (successful deletion)\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(Object.keys(jsonData)).to.have.lengthOf(0);\r",
+                  "});\r",
+                  "\r",
+                  "console.log(\"✓ Comment deleted successfully\");\r",
+                  "console.log(\"\");\r",
+                  "console.log(\"=== COMMENTS WORKFLOW COMPLETE ===\");\r",
+                  "console.log(\"Summary:\");\r",
+                  "console.log(\"1. ✓ Retrieved Post ID:\", pm.collectionVariables.get(\"commentsPostId\"));\r",
+                  "console.log(\"2. ✓ Retrieved existing comments on post\");\r",
+                  "console.log(\"3. ✓ Created new comment with ID:\", pm.collectionVariables.get(\"commentsCreatedId\"));\r",
+                  "console.log(\"4. ✓ Deleted the created comment\");\r",
+                  "console.log(\"==================================\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/comments/{{commentsCreatedId}}",
+              "protocol": "https",
+              "host": [
+                "jsonplaceholder",
+                "typicode",
+                "com"
+              ],
+              "path": [
+                "comments",
+                "{{commentsCreatedId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
@@ -1199,6 +2503,66 @@
     },
     {
       "key": "workflowNewPostBody",
+      "value": ""
+    },
+    {
+      "key": "commentsPostId",
+      "value": ""
+    },
+    {
+      "key": "commentsNewName",
+      "value": ""
+    },
+    {
+      "key": "commentsNewEmail",
+      "value": ""
+    },
+    {
+      "key": "commentsNewBody",
+      "value": ""
+    },
+    {
+      "key": "commentsCreatedId",
+      "value": ""
+    },
+    {
+      "key": "commentPostId",
+      "value": ""
+    },
+    {
+      "key": "commentName",
+      "value": ""
+    },
+    {
+      "key": "commentEmail",
+      "value": ""
+    },
+    {
+      "key": "commentBody",
+      "value": ""
+    },
+    {
+      "key": "patchPostId",
+      "value": ""
+    },
+    {
+      "key": "patchTitle",
+      "value": ""
+    },
+    {
+      "key": "userPostsUserId",
+      "value": ""
+    },
+    {
+      "key": "userPostsNewTitle",
+      "value": ""
+    },
+    {
+      "key": "userPostsNewBody",
+      "value": ""
+    },
+    {
+      "key": "userPostsCreatedId",
       "value": ""
     }
   ]

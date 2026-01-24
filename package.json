@@ -6,8 +6,10 @@
     "test": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json",
     "test:individual": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --folder \"Individual Tests\"",
     "test:workflow": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --folder \"CRUD Workflow\"",
-    "test:report": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json -r html --reporter-html-export reports/test-report.html",
-    "test:workflow:report": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --folder \"CRUD Workflow\" -r html --reporter-html-export reports/workflow-report.html",
+    "test:user-posts": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --folder \"User Posts Workflow\"",
+    "test:comments": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --folder \"Comments Workflow\"",
+    "test:report": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json -r htmlextra --reporter-htmlextra-export reports/test-report.html",
+    "test:workflow:report": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --folder \"CRUD Workflow\" -r htmlextra --reporter-htmlextra-export reports/workflow-report.html",
     "test:verbose": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --verbose"
   },
   "keywords": ["postman", "newman", "api-testing", "automation", "CRUD", "workflow"],
@@ -15,6 +17,6 @@
   "license": "MIT",
   "devDependencies": {
     "newman": "^6.0.0",
-    "newman-reporter-html": "^1.0.5"
+    "newman-reporter-htmlextra": "^1.23.0"
   }
 }

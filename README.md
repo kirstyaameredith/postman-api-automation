@@ -1,38 +1,61 @@
 # Postman API Automation Testing Project
 
-A beginner-friendly API automation testing project using Postman and Newman to test the JSONPlaceholder API.
+[![API Automation Tests](https://github.com/kirstyaameredith/postman-api-automation/actions/workflows/api-tests.yml/badge.svg)](https://github.com/kirstyaameredith/postman-api-automation/actions/workflows/api-tests.yml)
+
+A comprehensive API automation testing project using Postman and Newman to test the JSONPlaceholder API. This project demonstrates complete CRUD operations, request chaining, data-driven testing, and professional test organization.
 
 ## Project Structure
 
-This project contains two types of tests:
+This project contains **4 test suites** with **139 total tests** covering multiple API endpoints:
 
-### 1. Individual API Tests
-Independent tests for each HTTP method with dynamic test data:
-- **GET All Users** - Fetches all users and validates structure
-- **GET Single User** - Fetches a random user (1-10) with comprehensive validation
-- **POST Create New Post** - Creates posts with random userId, unique titles, and body content
+### 1. Individual Tests (11 requests, ~80 tests)
+Independent tests for various HTTP methods with dynamic test data:
+- **GET All Users** - Fetches and validates all users
+- **GET Single User** - Fetches random user (1-10) with comprehensive validation
+- **GET Comments** - Retrieves and validates comment structure
+- **GET Photos** - Tests photo endpoint with URL validation
+- **GET Albums** - Validates album data and relationships
+- **GET Todos** - Tests todo items with completion status checks
+- **POST Create New Post** - Creates posts with random userId and unique content
+- **POST Create New Comment** - Adds comments with validated email format
 - **PUT Update Post** - Updates random posts (1-100) with dynamic data
+- **PATCH Post** - Demonstrates partial updates (title only)
 - **DELETE Delete Post** - Deletes random posts (1-100)
 
-### 2. CRUD Workflow
-A complete end-to-end workflow demonstrating request chaining:
+### 2. CRUD Workflow (5 requests, ~25 tests)
+Complete lifecycle demonstration:
 1. **GET** - Retrieve an existing post (random ID 1-100)
 2. **PUT** - Update that post with new content
 3. **GET** - Verify the post still exists
 4. **DELETE** - Delete the post
 5. **POST** - Create a new post
 
-The workflow demonstrates data flow between API calls using collection variables.
+### 3. User Posts Workflow (4 requests, ~18 tests)
+User-centric workflow demonstrating data relationships:
+1. **GET User** - Retrieve a random user
+2. **GET User's Posts** - Fetch all posts for that user
+3. **POST Create Post** - Create a new post for that user
+4. **DELETE Post** - Clean up the created post
+
+### 4. Comments Workflow (4 requests, ~16 tests)
+Comment management workflow:
+1. **GET Post** - Retrieve a random post
+2. **GET Comments** - Fetch all comments on that post
+3. **POST Add Comment** - Add a new comment to the post
+4. **DELETE Comment** - Remove the created comment
 
 ## Features
 
-- 🎯 **Dynamic test data generation** (unique on each run)
-- 🔗 **Chained API requests** in workflow
-- 📊 **HTML reporting** capability
-- 🧪 **Comprehensive test assertions** (60-70 tests total)
-- 📝 **Detailed console logging**
-- ✨ **Professional test organization**
-- ✅ **Data validation** using only valid ID ranges
+- 🎯 **Dynamic test data generation** - Unique data on every run
+- 🔗 **Request chaining** - Variables passed between workflow steps
+- 📊 **HTML reporting** - Beautiful visual test reports
+- 🧪 **139 comprehensive tests** - Covering all major scenarios
+- 📝 **Detailed logging** - Console output at every step
+- ✨ **Professional organization** - Clear folder structure
+- ✅ **Data validation** - Only valid ID ranges used
+- 🔄 **Multiple workflows** - Demonstrating different testing patterns
+- 🎨 **PATCH vs PUT** - Shows understanding of partial vs full updates
+- 📧 **Email validation** - Regex patterns for format checking
 
 ## Prerequisites
 
@@ -42,69 +65,90 @@ The workflow demonstrates data flow between API calls using collection variables
 ## Installation
 
 1. Clone this repository:
-``````bash
-git clone https://github.com/YOUR_USERNAME/postman-api-automation.git
+```bash
+git clone https://github.com/kirstyaameredith/postman-api-automation.git
 cd postman-api-automation
-``````
+```
 
 2. Install dependencies:
-``````bash
-npm install
-``````
+```bash
+npm install --legacy-peer-deps
+```
 
 ## Running Tests
 
-### Run all tests:
-``````bash
+### Run all tests (139 tests across 24 requests):
+```bash
 npm test
-``````
+```
 
-### Run individual tests only:
-``````bash
+### Run specific test suites:
+```bash
+# Individual tests only (~80 tests)
 npm run test:individual
-``````
 
-### Run CRUD workflow only:
-``````bash
+# CRUD workflow only (~25 tests)
 npm run test:workflow
-``````
+
+# User Posts workflow only (~18 tests)
+npm run test:user-posts
+
+# Comments workflow only (~16 tests)
+npm run test:comments
+```
 
 ### Run with HTML reports:
-``````bash
+```bash
 # All tests with report
 npm run test:report
 
-# Workflow only with report
+# CRUD workflow with report
 npm run test:workflow:report
-``````
+```
 
-The HTML reports will be generated in the reports/ folder.
+The HTML reports will be generated in the `reports/` folder.
 
 ### Run with verbose output:
-``````bash
+```bash
 npm run test:verbose
-``````
+```
 
 ## Test Coverage
 
-### Individual Tests (~40 tests)
+### Individual Tests
 - ✅ Status code validation (200, 201, 404 checks)
-- ✅ Response time validation
+- ✅ Response time validation (< 2000ms)
 - ✅ Data structure validation
 - ✅ Field presence verification
 - ✅ Data type validation
 - ✅ Dynamic test data generation
-- ✅ Valid ID range validation (users 1-10, posts 1-100)
-- ✅ Email format validation
+- ✅ Valid ID range validation
+- ✅ Email format validation (regex)
+- ✅ URL format validation
 - ✅ Nested object structure validation
+- ✅ Array length validation
+- ✅ Boolean type checking
 
-### CRUD Workflow Tests (~25-30 tests)
-- ✅ Complete lifecycle testing (GET → UPDATE → GET → DELETE → CREATE)
+### Workflow Tests
+- ✅ Complete lifecycle testing (GET → UPDATE/CREATE → DELETE)
 - ✅ Request chaining with collection variables
 - ✅ Data flow validation between requests
 - ✅ End-to-end integration testing
 - ✅ Comprehensive logging at each step
 - ✅ Original vs updated data comparison
+- ✅ Resource creation and cleanup
+- ✅ Relationship validation (users → posts, posts → comments)
+
+## API Endpoints Tested
+
+| Endpoint | Methods | Tests |
+|----------|---------|-------|
+| `/users` | GET | User data validation |
+| `/posts` | GET, POST, PUT, PATCH, DELETE | Full CRUD operations |
+| `/comments` | GET, POST, DELETE | Comment management |
+| `/albums` | GET | Album data validation |
+| `/photos` | GET | Photo URL validation |
+| `/todos` | GET | Todo completion checks |
 
 ## API Tested
 
@@ -115,13 +159,40 @@ npm run test:verbose
 ## Project Highlights
 
 This project demonstrates:
-- ✨ Understanding of RESTful API principles
+- ✨ Understanding of RESTful API principles (GET, POST, PUT, PATCH, DELETE)
 - ✨ Test automation best practices
 - ✨ Data-driven testing approach
 - ✨ Request chaining and workflow management
 - ✨ Professional test organization and documentation
 - ✨ Dynamic data generation for realistic testing
 - ✨ Proper error handling and validation
+- ✨ Multiple testing patterns (individual, workflow, integration)
+- ✨ CI/CD integration with GitHub Actions
+
+## CI/CD Integration
+
+This project includes GitHub Actions workflow that:
+- ✅ Runs automatically on every push
+- ✅ Tests against Node.js 18
+- ✅ Executes all 139 tests
+- ✅ Generates and uploads HTML reports
+- ✅ Provides test status badges
+
+## Folder Structure
+```
+postman-api-automation/
+├── .github/
+│   └── workflows/
+│       └── api-tests.yml          # GitHub Actions configuration
+├── collections/
+│   └── JSONPlaceholder_API_Tests.postman_collection.json
+├── reports/                        # Generated test reports
+├── node_modules/
+├── .gitignore
+├── package.json
+├── package-lock.json
+└── README.md
+```
 
 ## Learning Resources
 
@@ -129,11 +200,18 @@ This project demonstrates:
 - [Newman Documentation](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/)
 - [JSONPlaceholder Guide](https://jsonplaceholder.typicode.com/guide/)
 
+## Test Statistics
+
+- **Total Requests**: 24
+- **Total Tests**: 139
+- **Test Suites**: 4
+- **API Endpoints**: 6
+- **HTTP Methods**: 5 (GET, POST, PUT, PATCH, DELETE)
+
 ## Author
 
-Your Name
+Kirsty Meredith
 
 ## License
 
 MIT
-"@ | Out-File -FilePath "README.md" -Encoding UTF8
