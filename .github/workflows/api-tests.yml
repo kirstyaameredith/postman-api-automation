@@ -1,0 +1,51 @@
+name: API Automation Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm install --legacy-peer-deps
+      
+    - name: Run all API tests (139 tests)
+      run: npm test
+      
+    - name: Run Individual Tests
+      run: npm run test:individual
+      
+    - name: Run CRUD Workflow
+      run: npm run test:workflow
+      
+    - name: Run User Posts Workflow
+      run: npm run test:user-posts
+      
+    - name: Run Comments Workflow
+      run: npm run test:comments
+      
+    - name: Generate HTML Report
+      run: npm run test:report
+      if: always()
+      
+    - name: Upload test report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-report
+        path: reports/test-report.html
+        retention-days: 30
