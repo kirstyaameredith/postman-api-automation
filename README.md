@@ -210,7 +210,7 @@ postman-api-automation/
 
 ## Author
 
-Kirsty Meredith
+Kirsty Meredith QA Engineer/Manager | Over 16+ years QA, PM experience | MSc | PSM 1 | Future SDET
 
 ## License
 
