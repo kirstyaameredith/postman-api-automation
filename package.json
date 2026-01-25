@@ -10,7 +10,10 @@
     "test:comments": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --folder \"Comments Workflow\"",
     "test:report": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json -r htmlextra --reporter-htmlextra-export reports/test-report.html",
     "test:workflow:report": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --folder \"CRUD Workflow\" -r htmlextra --reporter-htmlextra-export reports/workflow-report.html",
-    "test:verbose": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --verbose"
+    "test:verbose": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json --verbose",
+    "test:dev": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json -e environments/dev.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export reports/test-report-dev.html",
+    "test:staging": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json -e environments/staging.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export reports/test-report-staging.html",
+    "test:prod": "newman run collections/JSONPlaceholder_API_Tests.postman_collection.json -e environments/prod.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export reports/test-report-prod.html"
   },
   "keywords": ["postman", "newman", "api-testing", "automation", "CRUD", "workflow"],
   "author": "Your Name",
