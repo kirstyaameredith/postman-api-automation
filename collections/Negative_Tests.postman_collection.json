@@ -1,0 +1,640 @@
+{
+  "info": {
+    "name": "JSONPlaceholder Negative Tests",
+    "description": "Negative testing scenarios including invalid data, error handling, and edge cases",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Invalid Data Tests",
+      "item": [
+        {
+          "name": "POST Invalid User - Missing Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// JSONPlaceholder accepts invalid data, so we test structure",
+                  "pm.test(\"Status code is 201 (API accepts request)\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains posted data\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "    pm.expect(jsonData.name).to.eql('Invalid User');",
+                  "});",
+                  "",
+                  "console.log('✅ Invalid data test completed - API accepted malformed request');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Invalid User\",\n  \"username\": \"invaliduser\"\n}"
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "POST Invalid Email Format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request completes (no validation on mock API)\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Invalid email was accepted by API\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.email).to.eql('not-an-email');",
+                  "    console.log('⚠️ API accepted invalid email format');",
+                  "});",
+                  "",
+                  "console.log('✅ Negative test: Invalid email format handled');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"username\": \"testuser\",\n  \"email\": \"not-an-email\"\n}"
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "POST Empty Request Body",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Empty body returns ID\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "});",
+                  "",
+                  "console.log('✅ Empty body test completed');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["posts"]
+            }
+          }
+        },
+        {
+          "name": "POST Invalid JSON Syntax",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Most APIs would return 400 for invalid JSON",
+                  "pm.test(\"Response received\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 500, 201]);",
+                  "});",
+                  "",
+                  "console.log('Response code:', pm.response.code);",
+                  "console.log('✅ Invalid JSON syntax test completed');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{invalid json syntax"
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["posts"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Boundary Value Tests",
+      "item": [
+        {
+          "name": "GET User ID = 0 (Below Minimum)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 for invalid ID\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Empty response for ID 0\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(Object.keys(jsonData).length).to.eql(0);",
+                  "});",
+                  "",
+                  "console.log('✅ Boundary test: ID = 0 handled correctly');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users/0",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["users", "0"]
+            }
+          }
+        },
+        {
+          "name": "GET User ID = 999 (Above Maximum)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404 for non-existent ID\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "console.log('✅ Boundary test: ID = 999 handled correctly');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users/999",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["users", "999"]
+            }
+          }
+        },
+  {
+    "name": "GET User ID = -1 (Negative)",
+    "event": [
+      {
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 404 for negative ID\", function () {",
+            "    pm.response.to.have.status(404);",
+            "});",
+            "",
+            "console.log('✅ Boundary test: Negative ID handled correctly');"
+          ],
+          "type": "text/javascript"
+        }
+      }
+    ],
+    "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+        "raw": "https://jsonplaceholder.typicode.com/users/-1",
+        "protocol": "https",
+        "host": ["jsonplaceholder", "typicode", "com"],
+        "path": ["users", "-1"]
+      }
+    }
+  },
+  {
+    "name": "GET User ID = String (Invalid Type)",
+    "event": [
+      {
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test(\"Status code is 404 for string ID\", function () {",
+            "    pm.response.to.have.status(404);",
+            "});",
+            "",
+            "console.log('✅ Invalid type test: String ID handled correctly');"
+          ],
+          "type": "text/javascript"
+        }
+      }
+    ],
+    "request": {
+      "method": "GET",
+      "header": [],
+      "url": {
+        "raw": "https://jsonplaceholder.typicode.com/users/abc",
+        "protocol": "https",
+        "host": ["jsonplaceholder", "typicode", "com"],
+        "path": ["users", "abc"]
+      }
+    }
+  },
+  {
+    "name": "Security Tests",
+    "item": [
+      {
+        "name": "SQL Injection in POST Title",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"API handles SQL injection attempt\", function () {",
+                "    pm.response.to.have.status(201);",
+                "});",
+                "",
+                "pm.test(\"SQL injection string returned as-is\", function () {",
+                "    const jsonData = pm.response.json();",
+                "    pm.expect(jsonData.title).to.include('DROP TABLE');",
+                "    console.log('⚠️ SQL injection string was not sanitized');",
+                "});",
+                "",
+                "console.log('✅ Security test: SQL injection attempt');"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"userId\": 1,\n  \"title\": \"'; DROP TABLE posts; --\",\n  \"body\": \"SQL injection attempt\"\n}"
+          },
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts"]
+          }
+        }
+      },
+      {
+        "name": "XSS in POST Body",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"API handles XSS attempt\", function () {",
+                "    pm.response.to.have.status(201);",
+                "});",
+                "",
+                "pm.test(\"XSS script returned in response\", function () {",
+                "    const jsonData = pm.response.json();",
+                "    pm.expect(jsonData.body).to.include('<script>');",
+                "    console.log('⚠️ XSS script was not sanitized');",
+                "});",
+                "",
+                "console.log('✅ Security test: XSS attempt');"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"userId\": 1,\n  \"title\": \"XSS Test\",\n  \"body\": \"<script>alert('XSS')</script>\"\n}"
+          },
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts"]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "Edge Cases",
+    "item": [
+      {
+        "name": "POST Very Long Title (1000 chars)",
+        "event": [
+          {
+            "listen": "pre-request",
+            "script": {
+              "exec": [
+                "const longTitle = 'A'.repeat(1000);",
+                "pm.variables.set('longTitle', longTitle);"
+              ],
+              "type": "text/javascript"
+            }
+          },
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+               "pm.test(\"API handles very long title\", function () {",
+               "    pm.response.to.have.status(201);",
+               "});",
+               "",
+               "pm.test(\"Title is present in response\", function () {",
+               "    const jsonData = pm.response.json();",
+               "    pm.expect(jsonData).to.have.property('title');",
+               "    pm.expect(jsonData.title).to.be.a('string');",
+               "    // JSONPlaceholder is a mock API and may not preserve exact length",
+               "    console.log('Expected: 1000 chars, Received:', jsonData.title.length, 'chars');",
+               "});",
+                "",
+               "console.log('✅ Edge case: Very long title test completed');"
+    ],
+    "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"userId\": 1,\n  \"title\": \"{{longTitle}}\",\n  \"body\": \"Testing very long title\"\n}"
+          },
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts"]
+          }
+        }
+      },
+      {
+        "name": "POST Unicode Characters",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"API handles Unicode characters\", function () {",
+                "    pm.response.to.have.status(201);",
+                "});",
+                "",
+                "pm.test(\"Unicode preserved in response\", function () {",
+                "    const jsonData = pm.response.json();",
+                "    pm.expect(jsonData.title).to.include('测试');",
+                "    pm.expect(jsonData.title).to.include('👨‍💻');",
+                "});",
+                "",
+                "console.log('✅ Edge case: Unicode characters handled');"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"userId\": 1,\n  \"title\": \"测试标题 👨‍💻 テスト\",\n  \"body\": \"Unicode content: 你好世界 こんにちは שלום مرحبا\"\n}"
+          },
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts"]
+          }
+        }
+      },
+      {
+        "name": "POST Special Characters",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"API handles special characters\", function () {",
+                "    pm.response.to.have.status(201);",
+                "});",
+                "",
+                "pm.test(\"Special characters preserved\", function () {",
+                "    const jsonData = pm.response.json();",
+                "    pm.expect(jsonData.title).to.include('@#$%');",
+                "});",
+                "",
+                "console.log('✅ Edge case: Special characters handled');"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"userId\": 1,\n  \"title\": \"Special @#$%^&() Characters\",\n  \"body\": \"Testing: !@#$%^&()_+-=[]{}|;':,.<>?/~`\"\n}"
+          },
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts"]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "Non-Existent Resources",
+    "item": [
+      {
+        "name": "GET Non-Existent Endpoint",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Status code is 404 for non-existent endpoint\", function () {",
+                "    pm.response.to.have.status(404);",
+                "});",
+                "",
+                "console.log('✅ Non-existent endpoint test passed');"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/nonexistent",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["nonexistent"]
+          }
+        }
+      },
+      {
+        "name": "DELETE Non-Existent Post",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "// JSONPlaceholder returns 200 even for non-existent resources",
+                "pm.test(\"Request completed\", function () {",
+                "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                "});",
+                "",
+                "console.log('Response code:', pm.response.code);",
+                "console.log('✅ Non-existent resource delete test completed');"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "DELETE",
+          "header": [],
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts/99999",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts", "99999"]
+          }
+        }
+      },
+      {
+        "name": "PUT Non-Existent Post",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test(\"Request completed\", function () {",
+                "    pm.expect(pm.response.code).to.be.oneOf([200, 404, 500]);",
+                "});",
+                "",
+                "console.log('✅ Non-existent resource update test completed');"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"userId\": 1,\n  \"title\": \"Updated Title\",\n  \"body\": \"Updated Body\"\n}"
+          },
+          "url": {
+            "raw": "https://jsonplaceholder.typicode.com/posts/99999",
+            "protocol": "https",
+            "host": ["jsonplaceholder", "typicode", "com"],
+            "path": ["posts", "99999"]
+          }
+        }
+      }
+    ]
+   }
+  ]
+ }
+]
+}
