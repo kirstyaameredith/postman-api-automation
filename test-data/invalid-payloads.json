@@ -1,0 +1,79 @@
+{
+  "invalidUsers": [
+    {
+      "description": "Missing required email field",
+      "data": {
+        "name": "Test User",
+        "username": "testuser"
+      },
+      "expectedError": "Email is required"
+    },
+    {
+      "description": "Invalid email format",
+      "data": {
+        "name": "Test User",
+        "username": "testuser",
+        "email": "invalid-email"
+      },
+      "expectedError": "Invalid email format"
+    },
+    {
+      "description": "Empty name field",
+      "data": {
+        "name": "",
+        "username": "testuser",
+        "email": "test@example.com"
+      },
+      "expectedError": "Name cannot be empty"
+    }
+  ],
+  "invalidPosts": [
+    {
+      "description": "Missing userId",
+      "data": {
+        "title": "Test Post",
+        "body": "Test Body"
+      },
+      "expectedError": "UserId is required"
+    },
+    {
+      "description": "Invalid userId type",
+      "data": {
+        "userId": "not-a-number",
+        "title": "Test Post",
+        "body": "Test Body"
+      },
+      "expectedError": "UserId must be a number"
+    },
+    {
+      "description": "Empty title",
+      "data": {
+        "userId": 1,
+        "title": "",
+        "body": "Test Body"
+      },
+      "expectedError": "Title cannot be empty"
+    }
+  ],
+  "invalidComments": [
+    {
+      "description": "Invalid email in comment",
+      "data": {
+        "postId": 1,
+        "name": "Test Comment",
+        "email": "not-an-email",
+        "body": "Test comment body"
+      },
+      "expectedError": "Invalid email format"
+    },
+    {
+      "description": "Missing postId",
+      "data": {
+        "name": "Test Comment",
+        "email": "test@example.com",
+        "body": "Test comment body"
+      },
+      "expectedError": "PostId is required"
+    }
+  ]
+}

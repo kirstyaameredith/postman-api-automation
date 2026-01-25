@@ -1,0 +1,72 @@
+{
+  "edgeCases": {
+    "users": [
+      {
+        "description": "Very long name (255 characters)",
+        "data": {
+          "name": "A".repeat(255),
+          "username": "longname",
+          "email": "longname@example.com"
+        }
+      },
+      {
+        "description": "Special characters in name",
+        "data": {
+          "name": "José María O'Brien-Smith",
+          "username": "joseobrien",
+          "email": "jose@example.com"
+        }
+      },
+      {
+        "description": "Unicode characters in name",
+        "data": {
+          "name": "测试用户 👨‍💻",
+          "username": "unicodeuser",
+          "email": "unicode@example.com"
+        }
+      }
+    ],
+    "posts": [
+      {
+        "description": "Very long title (1000 characters)",
+        "data": {
+          "userId": 1,
+          "title": "T".repeat(1000),
+          "body": "Test body"
+        }
+      },
+      {
+        "description": "HTML in content",
+        "data": {
+          "userId": 1,
+          "title": "<script>alert('xss')</script>",
+          "body": "<b>Bold text</b> and <i>italic</i>"
+        }
+      },
+      {
+        "description": "SQL injection attempt",
+        "data": {
+          "userId": 1,
+          "title": "'; DROP TABLE posts; --",
+          "body": "Test body"
+        }
+      }
+    ],
+    "boundaryValues": {
+      "userIds": {
+        "minimum": 1,
+        "maximum": 10,
+        "belowMinimum": 0,
+        "aboveMaximum": 11,
+        "negative": -1
+      },
+      "postIds": {
+        "minimum": 1,
+        "maximum": 100,
+        "belowMinimum": 0,
+        "aboveMaximum": 101,
+        "negative": -5
+      }
+    }
+  }
+}

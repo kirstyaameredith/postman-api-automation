@@ -1,4 +1,52 @@
+# Dependencies
 node_modules/
+
+# Generated Reports
 reports/*.html
+reports/*.json
+reports/*.xml
+
+# Operating System Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+
+# Environment Files (if you add sensitive data later)
+.env
+.env.local
+.env.*.local
+
+# Test Results
+test-results/
+newman/
+coverage/
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+
+# Keep test data files (important!)
+!test-data/*.json
+!test-data/*.js

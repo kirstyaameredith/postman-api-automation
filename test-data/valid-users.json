@@ -1,0 +1,56 @@
+{
+  "users": [
+    {
+      "name": "John Doe",
+      "username": "johndoe",
+      "email": "john.doe@example.com",
+      "phone": "1-555-123-4567",
+      "website": "johndoe.com"
+    },
+    {
+      "name": "Jane Smith",
+      "username": "janesmith",
+      "email": "jane.smith@example.com",
+      "phone": "1-555-987-6543",
+      "website": "janesmith.io"
+    },
+    {
+      "name": "Bob Johnson",
+      "username": "bobjohnson",
+      "email": "bob.johnson@test.com",
+      "phone": "1-555-246-8135",
+      "website": "bobjohnson.net"
+    }
+  ],
+  "posts": [
+    {
+      "userId": 1,
+      "title": "Understanding API Testing",
+      "body": "API testing is crucial for ensuring the reliability and performance of web services. This post explores best practices and common patterns."
+    },
+    {
+      "userId": 2,
+      "title": "Automation Best Practices",
+      "body": "Test automation requires careful planning and execution. Learn the key principles that make automation projects successful."
+    },
+    {
+      "userId": 3,
+      "title": "RESTful API Design Patterns",
+      "body": "Designing RESTful APIs requires understanding HTTP methods, status codes, and resource naming conventions."
+    }
+  ],
+  "comments": [
+    {
+      "postId": 1,
+      "name": "Great insights on testing",
+      "email": "commenter1@example.com",
+      "body": "This is a very informative post about API testing. Thanks for sharing!"
+    },
+    {
+      "postId": 1,
+      "name": "Follow-up question",
+      "email": "commenter2@example.com",
+      "body": "What tools do you recommend for API automation?"
+    }
+  ]
+}
