@@ -112,6 +112,19 @@ The HTML reports will be generated in the `reports/` folder.
 ```bash
 npm run test:verbose
 ```
+## Reusable Scripts
+
+The project includes reusable scripts in the `scripts/` folder:
+
+**Pre-request Scripts:**
+- `auth-helper.js` - Authentication and token management
+- `data-generator.js` - Dynamic test data generation
+- `request-helper.js` - Request building utilities
+
+**Test Scripts:**
+- `common-assertions.js` - Reusable assertion functions
+
+See [scripts/README.md](scripts/README.md) for usage instructions.
 
 ## Test Coverage
 
@@ -181,16 +194,28 @@ This project includes GitHub Actions workflow that:
 ## Folder Structure
 ```
 postman-api-automation/
-├── .github/
-│   └── workflows/
-│       └── api-tests.yml          # GitHub Actions configuration
+├── .github/workflows/
 ├── collections/
-│   └── JSONPlaceholder_API_Tests.postman_collection.json
-├── reports/                        # Generated test reports
-├── node_modules/
+├── environments/         
+│   ├── dev.postman_environment.json
+│   ├── staging.postman_environment.json
+│   └── prod.postman_environment.json
+├── test-data/           
+│   ├── valid-users.json
+│   ├── invalid-payloads.json
+│   ├── edge-cases.json
+│   └── data-loader.js
+├── scripts/           
+│   ├── pre-request/
+│   │   ├── auth-helper.js
+│   │   ├── data-generator.js
+│   │   └── request-helper.js
+│   ├── test/
+│   │   └── common-assertions.js
+│   └── README.md
+├── reports/
 ├── .gitignore
 ├── package.json
-├── package-lock.json
 └── README.md
 ```
 
