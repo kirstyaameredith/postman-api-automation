@@ -126,6 +126,40 @@ The project includes reusable scripts in the `scripts/` folder:
 
 See [scripts/README.md](scripts/README.md) for usage instructions.
 
+### Performance Testing
+
+Run performance tests with multiple iterations to test API under load:
+```bash
+# Light load (10 iterations)
+npm run test:perf:light
+
+# Medium load (50 iterations) - Recommended for regular testing
+npm run test:perf
+
+# Heavy load (100 iterations)
+npm run test:perf:heavy
+
+# Stress test (200 iterations with 100ms delay between requests)
+npm run test:perf:stress
+```
+
+**After running a performance test, analyze the results:**
+```bash
+npm run perf:analyze
+```
+
+**Performance Reports Generated:**
+- `reports/performance-results.json` - Raw Newman results
+- `reports/performance-analysis.json` - Analyzed performance data
+- `reports/performance-report.html` - Visual HTML dashboard
+
+**What Gets Measured:**
+- Response time percentiles (P50, P95, P99)
+- Performance degradation over iterations
+- Throughput (requests per second)
+- Min/Max/Average response times
+- Automated performance recommendations
+
 ## Test Coverage
 
 ### Individual Tests

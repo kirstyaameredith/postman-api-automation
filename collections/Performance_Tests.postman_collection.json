@@ -1,0 +1,232 @@
+{
+  "info": {
+    "name": "Performance Tests",
+    "description": "Load and performance testing for JSONPlaceholder API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Load Test - GET Users",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const currentIteration = pm.info.iteration;",
+              "const currentResponseTime = pm.response.responseTime;",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Status is 200`, function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Response time < 3000ms`, function () {",
+              "    pm.expect(currentResponseTime).to.be.below(3000);",
+              "});",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Returns array of users`, function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "    pm.expect(jsonData.length).to.be.greaterThan(0);",
+              "});",
+              "",
+              "console.log(`⏱️ GET Users - Iteration ${currentIteration + 1}: ${currentResponseTime}ms`);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/users",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["users"]
+        }
+      }
+    },
+    {
+      "name": "Load Test - GET Posts",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const currentIteration = pm.info.iteration;",
+              "const currentResponseTime = pm.response.responseTime;",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Status is 200`, function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Response time < 3000ms`, function () {",
+              "    pm.expect(currentResponseTime).to.be.below(3000);",
+              "});",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Returns array`, function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "});",
+              "",
+              "console.log(`⏱️ GET Posts - Iteration ${currentIteration + 1}: ${currentResponseTime}ms`);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["posts"]
+        }
+      }
+    },
+    {
+      "name": "Stress Test - POST Create",
+      "event": [
+        {
+          "listen": "pre-request",
+          "script": {
+            "exec": [
+              "const timestamp = Date.now();",
+              "const currentIteration = pm.info.iteration;",
+              "const randomNum = Math.floor(Math.random() * 1000);",
+              "",
+              "pm.variables.set('uniqueTitle', `Performance Test Post ${currentIteration + 1} - ${timestamp}`);",
+              "pm.variables.set('uniqueBody', `This is performance test iteration ${currentIteration + 1} with random number ${randomNum}`);"
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const currentIteration = pm.info.iteration;",
+              "const currentResponseTime = pm.response.responseTime;",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Create successful (201)`, function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Response time < 3000ms`, function () {",
+              "    pm.expect(currentResponseTime).to.be.below(3000);",
+              "});",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Returns created resource`, function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData).to.have.property('title');",
+              "});",
+              "",
+              "console.log(`⏱️ POST Create - Iteration ${currentIteration + 1}: ${currentResponseTime}ms`);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 1,\n  \"title\": \"{{uniqueTitle}}\",\n  \"body\": \"{{uniqueBody}}\"\n}"
+        },
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["posts"]
+        }
+      }
+    },
+    {
+      "name": "Load Test - GET Single Post",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const currentIteration = pm.info.iteration;",
+              "const currentResponseTime = pm.response.responseTime;",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Status is 200`, function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Response time < 2000ms`, function () {",
+              "    pm.expect(currentResponseTime).to.be.below(2000);",
+              "});",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Returns post object`, function () {",
+              "    const jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData.id).to.eql(1);",
+              "    pm.expect(jsonData).to.have.property('userId');",
+              "    pm.expect(jsonData).to.have.property('title');",
+              "});",
+              "",
+              "console.log(`⏱️ GET Post 1 - Iteration ${currentIteration + 1}: ${currentResponseTime}ms`);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/posts/1",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["posts", "1"]
+        }
+      }
+    },
+    {
+      "name": "Load Test - GET Comments",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const currentIteration = pm.info.iteration;",
+              "const currentResponseTime = pm.response.responseTime;",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Status is 200`, function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(`Iteration ${currentIteration + 1} - Response time < 3000ms`, function () {",
+              "    pm.expect(currentResponseTime).to.be.below(3000);",
+              "});",
+              "",
+              "console.log(`⏱️ GET Comments - Iteration ${currentIteration + 1}: ${currentResponseTime}ms`);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://jsonplaceholder.typicode.com/comments",
+          "protocol": "https",
+          "host": ["jsonplaceholder", "typicode", "com"],
+          "path": ["comments"]
+        }
+      }
+    }
+  ]
+}
