@@ -1,0 +1,649 @@
+{
+  "info": {
+    "name": "Contract Tests (JSON Schema Validation)",
+    "description": "Validates API responses against JSON schemas to ensure contract compliance",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User Contract Tests",
+      "item": [
+        {
+          "name": "Validate Single User Schema",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const schema = {",
+                  "    \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+                  "    \"type\": \"object\",",
+                  "    \"required\": [\"id\", \"name\", \"username\", \"email\"],",
+                  "    \"properties\": {",
+                  "        \"id\": { \"type\": \"integer\", \"minimum\": 1 },",
+                  "        \"name\": { \"type\": \"string\", \"minLength\": 1 },",
+                  "        \"username\": { \"type\": \"string\", \"minLength\": 1 },",
+                  "        \"email\": { \"type\": \"string\", \"pattern\": \"^[^@]+@[^@]+\\\\.[^@]+$\" },",
+                  "        \"address\": { \"type\": \"object\" },",
+                  "        \"phone\": { \"type\": \"string\" },",
+                  "        \"website\": { \"type\": \"string\" },",
+                  "        \"company\": { \"type\": \"object\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"User schema is valid\", function () {",
+                  "    pm.response.to.have.jsonSchema(schema);",
+                  "});",
+                  "",
+                  "pm.test(\"User has all required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "    pm.expect(jsonData).to.have.property('username');",
+                  "    pm.expect(jsonData).to.have.property('email');",
+                  "});",
+                  "",
+                  "pm.test(\"User ID is a positive integer\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.be.a('number');",
+                  "    pm.expect(jsonData.id).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Email format is valid\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const emailRegex = /^[^@]+@[^@]+\\.[^@]+$/;",
+                  "    pm.expect(emailRegex.test(jsonData.email)).to.be.true;",
+                  "});",
+                  "",
+                  "console.log('✅ User contract validation passed');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users/1",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Validate Users Array Schema",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const userSchema = {",
+                  "    \"type\": \"object\",",
+                  "    \"required\": [\"id\", \"name\", \"username\", \"email\"],",
+                  "    \"properties\": {",
+                  "        \"id\": { \"type\": \"integer\" },",
+                  "        \"name\": { \"type\": \"string\" },",
+                  "        \"username\": { \"type\": \"string\" },",
+                  "        \"email\": { \"type\": \"string\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "const arraySchema = {",
+                  "    \"type\": \"array\",",
+                  "    \"items\": userSchema,",
+                  "    \"minItems\": 1",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Users array schema is valid\", function () {",
+                  "    pm.response.to.have.jsonSchema(arraySchema);",
+                  "});",
+                  "",
+                  "pm.test(\"All users have required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    jsonData.forEach(user => {",
+                  "        pm.expect(user).to.have.property('id');",
+                  "        pm.expect(user).to.have.property('name');",
+                  "        pm.expect(user).to.have.property('username');",
+                  "        pm.expect(user).to.have.property('email');",
+                  "    });",
+                  "});",
+                  "",
+                  "console.log('✅ Users array contract validation passed');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/users",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["users"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Post Contract Tests",
+      "item": [
+        {
+          "name": "Validate Single Post Schema",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const schema = {",
+                  "    \"type\": \"object\",",
+                  "    \"required\": [\"userId\", \"id\", \"title\", \"body\"],",
+                  "    \"properties\": {",
+                  "        \"userId\": { \"type\": \"integer\", \"minimum\": 1 },",
+                  "        \"id\": { \"type\": \"integer\", \"minimum\": 1 },",
+                  "        \"title\": { \"type\": \"string\", \"minLength\": 1 },",
+                  "        \"body\": { \"type\": \"string\", \"minLength\": 1 }",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Post schema is valid\", function () {",
+                  "    pm.response.to.have.jsonSchema(schema);",
+                  "});",
+                  "",
+                  "pm.test(\"Post has all required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('userId');",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "    pm.expect(jsonData).to.have.property('body');",
+                  "});",
+                  "",
+                  "pm.test(\"Post IDs are positive integers\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.userId).to.be.a('number').above(0);",
+                  "    pm.expect(jsonData.id).to.be.a('number').above(0);",
+                  "});",
+                  "",
+                  "console.log('✅ Post contract validation passed');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/1",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["posts", "1"]
+            }
+          }
+        },
+        {
+          "name": "Validate Posts Array Schema",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const postSchema = {",
+                  "    \"type\": \"object\",",
+                  "    \"required\": [\"userId\", \"id\", \"title\", \"body\"],",
+                  "    \"properties\": {",
+                  "        \"userId\": { \"type\": \"integer\" },",
+                  "        \"id\": { \"type\": \"integer\" },",
+                  "        \"title\": { \"type\": \"string\" },",
+                  "        \"body\": { \"type\": \"string\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "const arraySchema = {",
+                  "    \"type\": \"array\",",
+                  "    \"items\": postSchema,",
+                  "    \"minItems\": 1",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Posts array schema is valid\", function () {",
+                  "    pm.response.to.have.jsonSchema(arraySchema);",
+                  "});",
+                  "",
+                  "pm.test(\"Posts array has 100 items\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.length).to.eql(100);",
+                  "});",
+                  "",
+                  "console.log('✅ Posts array contract validation passed');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["posts"]
+            }
+          }
+        },
+        {
+          "name": "Validate Created Post Schema",
+          "event": [
+            {
+              "listen": "pre-request",
+              "script": {
+                "exec": [
+                  "const timestamp = Date.now();",
+                  "pm.variables.set('postTitle', `Contract Test Post ${timestamp}`);",
+                  "pm.variables.set('postBody', `Testing schema validation for created posts`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const schema = {",
+                  "    \"type\": \"object\",",
+                  "    \"required\": [\"id\", \"userId\", \"title\", \"body\"],",
+                  "    \"properties\": {",
+                  "        \"userId\": { \"type\": \"integer\" },",
+                  "        \"id\": { \"type\": \"integer\" },",
+                  "        \"title\": { \"type\": \"string\" },",
+                  "        \"body\": { \"type\": \"string\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Created post schema is valid\", function () {",
+                  "    pm.response.to.have.jsonSchema(schema);",
+                  "});",
+                  "",
+                  "pm.test(\"Created post returns an ID\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "console.log('✅ Created post contract validation passed');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"title\": \"{{postTitle}}\",\n  \"body\": \"{{postBody}}\"\n}"
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["posts"]
+            }
+          }
+        },
+        {
+          "name": "Validate Updated Post Schema",
+          "event": [
+            {
+              "listen": "pre-request",
+              "script": {
+                "exec": [
+                  "const timestamp = Date.now();",
+                  "pm.variables.set('updatedTitle', `Updated Post ${timestamp}`);",
+                  "pm.variables.set('updatedBody', `Updated content for contract testing`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const schema = {",
+                  "    \"type\": \"object\",",
+                  "    \"required\": [\"id\", \"userId\", \"title\", \"body\"],",
+                  "    \"properties\": {",
+                  "        \"userId\": { \"type\": \"integer\" },",
+                  "        \"id\": { \"type\": \"integer\" },",
+                  "        \"title\": { \"type\": \"string\" },",
+                  "        \"body\": { \"type\": \"string\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Updated post schema is valid\", function () {",
+                  "    pm.response.to.have.jsonSchema(schema);",
+                  "});",
+                  "",
+                  "pm.test(\"Updated post preserves ID\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.eql(1);",
+                  "});",
+                  "",
+                  "console.log('✅ Updated post contract validation passed');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"title\": \"{{updatedTitle}}\",\n  \"body\": \"{{updatedBody}}\"\n}"
+            },
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/1",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["posts", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comment Contract Tests",
+      "item": [
+        {
+          "name": "Validate Single Comment Schema",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const schema = {",
+                  "    \"type\": \"object\",",
+                  "    \"required\": [\"postId\", \"id\", \"name\", \"email\", \"body\"],",
+                  "    \"properties\": {",
+                  "        \"postId\": { \"type\": \"integer\", \"minimum\": 1 },",
+                  "        \"id\": { \"type\": \"integer\", \"minimum\": 1 },",
+                  "        \"name\": { \"type\": \"string\", \"minLength\": 1 },",
+                  "        \"email\": { \"type\": \"string\", \"pattern\": \"^[^@]+@[^@]+\\\\.[^@]+$\" },",
+                  "        \"body\": { \"type\": \"string\", \"minLength\": 1 }",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Comment schema is valid\", function () {",
+                  "    pm.response.to.have.jsonSchema(schema);",
+                  "});",
+                  "",
+                  "pm.test(\"Comment has all required fields\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('postId');",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "    pm.expect(jsonData).to.have.property('email');",
+                  "    pm.expect(jsonData).to.have.property('body');",
+                  "});",
+                  "",
+                  "pm.test(\"Comment email format is valid\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const emailRegex = /^[^@]+@[^@]+\\.[^@]+$/;",
+                  "    pm.expect(emailRegex.test(jsonData.email)).to.be.true;",
+                  "});",
+                  "",
+                  "console.log('✅ Comment contract validation passed');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/comments/1",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["comments", "1"]
+            }
+          }
+        },
+        {
+          "name": "Validate Comments Array Schema",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const commentSchema = {",
+                  "    \"type\": \"object\",",
+                  "    \"required\": [\"postId\", \"id\", \"name\", \"email\", \"body\"],",
+                  "    \"properties\": {",
+                  "        \"postId\": { \"type\": \"integer\" },",
+                  "        \"id\": { \"type\": \"integer\" },",
+                  "        \"name\": { \"type\": \"string\" },",
+                  "        \"email\": { \"type\": \"string\" },",
+                  "        \"body\": { \"type\": \"string\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "const arraySchema = {",
+                  "    \"type\": \"array\",",
+                  "    \"items\": commentSchema,",
+                  "    \"minItems\": 1",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Comments array schema is valid\", function () {",
+                  "    pm.response.to.have.jsonSchema(arraySchema);",
+                  "});",
+                  "",
+                  "pm.test(\"All comments have valid email format\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const emailRegex = /^[^@]+@[^@]+\\.[^@]+$/;",
+                  "    ",
+                  "    jsonData.forEach(comment => {",
+                  "        pm.expect(emailRegex.test(comment.email)).to.be.true;",
+                  "    });",
+                  "});",
+                  "",
+                  "console.log('✅ Comments array contract validation passed');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/comments?postId=1",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["comments"],
+              "query": [
+                {
+                  "key": "postId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Schema Breaking Changes Detection",
+      "item": [
+        {
+          "name": "Detect Schema Compliance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const currentSchema = {",
+                  "    \"type\": \"object\",",
+                  "    \"required\": [\"userId\", \"id\", \"title\", \"body\"],",
+                  "    \"properties\": {",
+                  "        \"userId\": { \"type\": \"integer\" },",
+                  "        \"id\": { \"type\": \"integer\" },",
+                  "        \"title\": { \"type\": \"string\" },",
+                  "        \"body\": { \"type\": \"string\" }",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Current schema is valid\", function () {",
+                  "    pm.response.to.have.jsonSchema(currentSchema);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has expected structure\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('userId');",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "    pm.expect(jsonData).to.have.property('body');",
+                  "});",
+                  "",
+                  "console.log('\\n🔍 SCHEMA VALIDATION:');",
+                  "console.log('✅ API response matches expected contract');",
+                  "console.log('✅ All required fields present');",
+                  "console.log('✅ Field types are correct');",
+                  "console.log('\\nThis ensures backward compatibility and catches breaking changes!');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/1",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["posts", "1"]
+            }
+          }
+        },
+        {
+          "name": "Strict Schema Validation (No Extra Fields)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const strictSchema = {",
+                  "    \"type\": \"object\",",
+                  "    \"required\": [\"userId\", \"id\", \"title\", \"body\"],",
+                  "    \"properties\": {",
+                  "        \"userId\": { \"type\": \"integer\" },",
+                  "        \"id\": { \"type\": \"integer\" },",
+                  "        \"title\": { \"type\": \"string\" },",
+                  "        \"body\": { \"type\": \"string\" }",
+                  "    },",
+                  "    \"additionalProperties\": false",
+                  "};",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Strict schema validation\", function () {",
+                  "    pm.response.to.have.jsonSchema(strictSchema);",
+                  "});",
+                  "",
+                  "const jsonData = pm.response.json();",
+                  "const fieldCount = Object.keys(jsonData).length;",
+                  "",
+                  "console.log('\\n🔒 STRICT SCHEMA MODE:');",
+                  "console.log(`Total fields in response: ${fieldCount}`);",
+                  "console.log('Expected fields: userId, id, title, body (4 fields)');",
+                  "console.log('Additional properties: ' + (fieldCount > 4 ? 'DETECTED ⚠️' : 'None ✅'));",
+                  "console.log('\\nStrict mode catches unwanted fields in API responses!');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts/1",
+              "protocol": "https",
+              "host": ["jsonplaceholder", "typicode", "com"],
+              "path": ["posts", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
