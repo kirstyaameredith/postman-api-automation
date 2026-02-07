@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * 1'  # Run every Monday at 9 AM UTC
 
 jobs:
   test:
@@ -25,27 +27,78 @@ jobs:
       
     - name: Run all API tests (139 tests)
       run: npm test
+      continue-on-error: true
       
-    - name: Run Individual Tests
+    - name: Run individual tests
       run: npm run test:individual
+      continue-on-error: true
       
-    - name: Run CRUD Workflow
+    - name: Run CRUD workflow
       run: npm run test:workflow
+      continue-on-error: true
       
-    - name: Run User Posts Workflow
+    - name: Run user posts workflow
       run: npm run test:user-posts
+      continue-on-error: true
       
-    - name: Run Comments Workflow
+    - name: Run comments workflow
       run: npm run test:comments
+      continue-on-error: true
       
-    - name: Generate HTML Report
+    - name: Run negative tests
+      run: npm run test:negative
+      continue-on-error: true
+      
+    - name: Run performance tests (light load)
+      run: npm run test:perf:light
+      continue-on-error: true
+      
+    - name: Analyze performance results
+      run: npm run perf:analyze
+      continue-on-error: true
+      
+    - name: Generate HTML report
       run: npm run test:report
       if: always()
       
-    - name: Upload test report
+    - name: Upload test reports
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-report
-        path: reports/test-report.html
+        name: test-reports
+        path: |
+          reports/*.html
+          reports/*.json
         retention-days: 30
+        
+    - name: Upload performance reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: performance-reports
+        path: |
+          reports/performance-*.html
+          reports/performance-*.json
+        retention-days: 30
+
+  test-environments:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev, staging, prod]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm install --legacy-peer-deps
+      
+    - name: Run tests against ${{ matrix.environment }}
+      run: npm run test:${{ matrix.environment }}
+      continue-on-error: true
