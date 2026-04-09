@@ -114,6 +114,11 @@ class CustomReporter {
             }
         };
 
+         // ⭐ INSERT NEW LOGIC HERE ⭐
+        report.thresholds = this.evaluateThresholds(report);
+        report.trends = this.compareTrends(report);
+        report.chartData = this.buildChartData(report);
+        
         // Save detailed JSON report
         const reportPath = path.join('reports', 'detailed-report.json');
         fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
@@ -124,6 +129,68 @@ class CustomReporter {
         // Generate HTML dashboard
         this.generateHtmlDashboard(report);
     }
+
+    evaluateThresholds(report) {
+    const thresholds = {
+        p95: 200,               // ms
+        max: 500,               // ms
+        avg: 150,               // ms
+        throughput: 5           // req/s
+    };
+
+    const results = {
+        passed: [],
+        failed: []
+    };
+
+    const p95 = report.performance.percentiles.p95;
+    const max = parseFloat(report.summary.maxResponseTime);
+    const avg = parseFloat(report.summary.averageResponseTime);
+    const throughput = report.summary.totalRequests / (parseFloat(report.summary.totalTime) * 1000);
+
+    function check(name, value, limit, comparator = "<") {
+        const pass = comparator === "<" ? value <= limit : value >= limit;
+        const entry = { name, value, limit, pass };
+
+        if (pass) results.passed.push(entry);
+        else results.failed.push(entry);
+    }
+
+    check("95th Percentile", p95, thresholds.p95);
+    check("Max Response Time", max, thresholds.max);
+    check("Average Response Time", avg, thresholds.avg);
+    check("Throughput", throughput, thresholds.throughput, ">");
+
+    return results;
+}
+
+compareTrends(report) {
+    const historyDir = path.join("reports", "history");
+    if (!fs.existsSync(historyDir)) fs.mkdirSync(historyDir);
+
+    const files = fs.readdirSync(historyDir).filter(f => f.endsWith(".json"));
+    if (files.length === 0) return { message: "No previous runs available" };
+
+    const lastFile = files.sort().reverse()[0];
+    const previous = JSON.parse(fs.readFileSync(path.join(historyDir, lastFile)));
+
+    const trends = {
+        avgResponseChange: report.summary.averageResponseTime - previous.averageResponseTime,
+        maxResponseChange: report.summary.maxResponseTime - previous.maxResponseTime,
+        totalRequestsChange: report.summary.totalRequests - previous.totalRequests
+    };
+
+    return trends;
+}
+
+buildChartData(report) {
+    return {
+        labels: report.performance.responseTimes.map((_, i) => i + 1),
+        responseTimes: report.performance.responseTimes,
+        p95: report.performance.percentiles.p95,
+        median: report.performance.percentiles.median
+    };
+}
 
     calculatePercentiles() {
         const sorted = [...this.metrics.responseTimes].sort((a, b) => a - b);
@@ -155,154 +222,91 @@ class CustomReporter {
     }
 
     generateHtmlDashboard(report) {
-        const html = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Test Dashboard</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; margin-bottom: 20px; }
-        .header h1 { font-size: 2em; margin-bottom: 10px; }
-        .header p { opacity: 0.9; }
-        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        .metric-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .metric-card h3 { color: #666; font-size: 0.9em; margin-bottom: 10px; text-transform: uppercase; }
-        .metric-card .value { font-size: 2em; font-weight: bold; color: #333; }
-        .metric-card.success .value { color: #4caf50; }
-        .metric-card.danger .value { color: #f44336; }
-        .metric-card.info .value { color: #2196f3; }
-        .section { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .section h2 { margin-bottom: 15px; color: #333; }
-        table { width: 100%; border-collapse: collapse; }
-        table th { background: #f5f5f5; padding: 12px; text-align: left; font-weight: 600; color: #666; }
-        table td { padding: 12px; border-top: 1px solid #eee; }
-        .status-200 { color: #4caf50; font-weight: bold; }
-        .status-201 { color: #4caf50; font-weight: bold; }
-        .status-400 { color: #ff9800; font-weight: bold; }
-        .status-404 { color: #f44336; font-weight: bold; }
-        .status-500 { color: #f44336; font-weight: bold; }
-        .method { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; }
-        .method-GET { background: #e3f2fd; color: #1976d2; }
-        .method-POST { background: #e8f5e9; color: #388e3c; }
-        .method-PUT { background: #fff3e0; color: #f57c00; }
-        .method-PATCH { background: #f3e5f5; color: #7b1fa2; }
-        .method-DELETE { background: #ffebee; color: #c62828; }
-        .failure { background: #ffebee; padding: 10px; border-left: 4px solid #f44336; margin-bottom: 10px; border-radius: 4px; }
-        .failure-test { font-weight: bold; color: #c62828; }
-        .failure-error { color: #666; margin-top: 5px; }
-        .percentile { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .percentile-label { color: #666; }
-        .percentile-value { font-weight: bold; color: #333; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🎯 API Test Dashboard</h1>
-            <p>JSONPlaceholder API Automation Results</p>
-            <p style="font-size: 0.9em; margin-top: 5px;">Generated: ${new Date().toLocaleString()}</p>
+    const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>API Test Dashboard</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+            .card { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+            .pass { color: green; font-weight: bold; }
+            .fail { color: red; font-weight: bold; }
+            h1 { margin-bottom: 10px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
+            th { background: #eee; }
+        </style>
+    </head>
+    <body>
+
+        <h1>📊 API Test Dashboard</h1>
+
+        <div class="card">
+            <h2>Summary</h2>
+            <p><strong>Total Tests:</strong> ${report.summary.totalTests}</p>
+            <p><strong>Passed:</strong> ${report.summary.passed}</p>
+            <p><strong>Failed:</strong> ${report.summary.failed}</p>
+            <p><strong>Pass Rate:</strong> ${report.summary.passRate}</p>
+            <p><strong>Total Requests:</strong> ${report.summary.totalRequests}</p>
+            <p><strong>Average Response Time:</strong> ${report.summary.averageResponseTime}</p>
+            <p><strong>Max Response Time:</strong> ${report.summary.maxResponseTime}</p>
         </div>
 
-        <div class="metrics">
-            <div class="metric-card success">
-                <h3>Pass Rate</h3>
-                <div class="value">${report.summary.passRate}</div>
-            </div>
-            <div class="metric-card ${report.summary.failed > 0 ? 'danger' : 'success'}">
-                <h3>Tests Passed</h3>
-                <div class="value">${report.summary.passed}/${report.summary.totalTests}</div>
-            </div>
-            <div class="metric-card info">
-                <h3>Total Requests</h3>
-                <div class="value">${report.summary.totalRequests}</div>
-            </div>
-            <div class="metric-card info">
-                <h3>Avg Response Time</h3>
-                <div class="value">${report.summary.averageResponseTime}</div>
-            </div>
+        <div class="card">
+            <h2>Threshold Results</h2>
+            ${
+                report.thresholds.failed.length === 0
+                ? `<p class="pass">All thresholds passed ✔</p>`
+                : report.thresholds.failed.map(f => `
+                    <p class="fail">❌ ${f.name}: ${f.value} (limit ${f.limit})</p>
+                `).join("")
+            }
         </div>
 
-        <div class="section">
-            <h2>📊 Performance Metrics</h2>
-            <div class="percentile">
-                <span class="percentile-label">Minimum:</span>
-                <span class="percentile-value">${report.summary.minResponseTime}</span>
-            </div>
-            <div class="percentile">
-                <span class="percentile-label">50th Percentile (Median):</span>
-                <span class="percentile-value">${report.performance.percentiles.p50}ms</span>
-            </div>
-            <div class="percentile">
-                <span class="percentile-label">75th Percentile:</span>
-                <span class="percentile-value">${report.performance.percentiles.p75}ms</span>
-            </div>
-            <div class="percentile">
-                <span class="percentile-label">90th Percentile:</span>
-                <span class="percentile-value">${report.performance.percentiles.p90}ms</span>
-            </div>
-            <div class="percentile">
-                <span class="percentile-label">95th Percentile:</span>
-                <span class="percentile-value">${report.performance.percentiles.p95}ms</span>
-            </div>
-            <div class="percentile">
-                <span class="percentile-label">99th Percentile:</span>
-                <span class="percentile-value">${report.performance.percentiles.p99}ms</span>
-            </div>
-            <div class="percentile">
-                <span class="percentile-label">Maximum:</span>
-                <span class="percentile-value">${report.summary.maxResponseTime}</span>
-            </div>
+        <div class="card">
+            <h2>Trend Comparison</h2>
+            ${
+                report.trends.message
+                ? `<p>${report.trends.message}</p>`
+                : `
+                    <p><strong>Avg Response Change:</strong> ${report.trends.avgResponseChange.toFixed(2)}ms</p>
+                    <p><strong>Max Response Change:</strong> ${report.trends.maxResponseChange.toFixed(2)}ms</p>
+                    <p><strong>Total Requests Change:</strong> ${report.trends.totalRequestsChange}</p>
+                `
+            }
         </div>
 
-        ${report.failures.length > 0 ? `
-        <div class="section">
-            <h2>❌ Failures (${report.failures.length})</h2>
-            ${report.failures.map(f => `
-                <div class="failure">
-                    <div class="failure-test">${f.test}</div>
-                    <div class="failure-error">${f.error}</div>
-                    <div style="color: #999; font-size: 0.9em; margin-top: 5px;">Request: ${f.request}</div>
-                </div>
-            `).join('')}
+        <div class="card">
+            <h2>Response Time Chart</h2>
+            <canvas id="responseChart"></canvas>
         </div>
-        ` : ''}
 
-        <div class="section">
-            <h2>📝 Request Details</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Request</th>
-                        <th>Method</th>
-                        <th>Status</th>
-                        <th>Response Time</th>
-                        <th>Size</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${report.requests.map(r => `
-                        <tr>
-                            <td>${r.name}</td>
-                            <td><span class="method method-${r.method}">${r.method}</span></td>
-                            <td class="status-${r.status}">${r.status}</td>
-                            <td>${r.responseTime}ms</td>
-                            <td>${(r.size / 1024).toFixed(2)} KB</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</body>
-</html>`;
+        <script>
+            const ctx = document.getElementById('responseChart');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ${JSON.stringify(report.chartData.labels)},
+                    datasets: [{
+                        label: 'Response Time (ms)',
+                        data: ${JSON.stringify(report.chartData.responseTimes)},
+                        borderColor: 'blue',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.2
+                    }]
+                }
+            });
+        </script>
 
-        fs.writeFileSync(path.join('reports', 'dashboard.html'), html);
-    }
+    </body>
+    </html>
+    `;
+
+    fs.writeFileSync(path.join('reports', 'performance-report.html'), html);
+}
 
     displaySummary() {
         console.log('\n' + '='.repeat(60));
