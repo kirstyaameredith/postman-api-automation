@@ -112,4 +112,75 @@ Performance Reports Generated
 📈 Advanced Performance Dashboard
 Custom reporter generates a full performance engineering dashboard including:
 
+✔ Threshold Engine
+Automatically validates:
+- P95 < 200ms
+- Max < 500ms
+- Avg < 150ms
+- Throughput > 5 req/s
+
+✔ Trend Engine
+Compares current vs previous runs:
+- Avg response time change
+- Max response time change
+- Total request change
+
+✔ Chart Engine
+Interactive response time graph using Chart.js.
+
+✔ HTML Dashboard
+Modern, clean, interactive UI.
+
+🧩 Reusable Scripts
+Located in /scripts:
+
+Pre‑request scripts:
+- auth-helper.js
+- data-generator.js
+- request-helper.js
+
+Test scripts:
+- common-assertions.js
+
+📚 API Endpoints Tested
+| Endpoint | Methods | Coverage | 
+| /users | GET | User validation | 
+| /posts | GET, POST, PUT, PATCH, DELETE | Full CRUD | 
+| /comments | GET, POST, DELETE | Comment workflows | 
+| /albums | GET | Album validation | 
+| /photos | GET | URL validation | 
+| /todos | GET | Completion checks | 
+
+🧠 Project Highlights
+This project demonstrates:
+- REST API testing mastery
+- Workflow‑based automation
+- Dynamic data generation
+- Performance engineering fundamentals
+- Custom reporting with Node.js
+- CI/CD automation
+- Professional documentation
+- Real‑world testing patterns
+
+🔄 CI/CD Integration
+GitHub Actions pipeline:
+- Runs on every push
+- Executes all 139 tests
+- Generates HTML reports
+- Uploads artifacts
+- Displays status badge
+
+👩‍💻 Author
+Kirsty Meredith
+Senior QA Engineer & Manager (16+ years)
+MSc | PSM I | Future SDET
+
+📄 License
+MIT
+
+
+
+
+
+
 
