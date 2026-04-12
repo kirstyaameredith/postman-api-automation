@@ -47,6 +47,7 @@ This framework tests the JSONPlaceholder REST API using four structured test sui
 - Node.js 18 compatibility
 
 ## 🏗️ **Project Structure**
+```
 postman-api-automation/
 ├── collections/               # Postman collections (4 suites)
 ├── environments/              # Dev, staging, prod environments
@@ -58,7 +59,8 @@ postman-api-automation/
 ├── reports/                   # HTML & JSON reports
 ├── test-data/                 # Dynamic & static test data
 ├── .github/workflows/         # CI/CD pipeline
-└── README.md
+└── README.md.
+```
 
 ## ⚙️ **Installation**
 git clone https://github.com/kirstyaameredith/postman-api-automation.git
